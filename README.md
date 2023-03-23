@@ -20,11 +20,17 @@ LangChain UI enables anyone to create and host LLM Agents and Chatbots using a n
 Features:
 
 👉 Create, configure and save Prompt templates, Document loaders and Indexes
+
 👉 Create custom Agents, Chains and Chatbot apps
+
 👉 Dedicated API endpoint for each app
+
 👉 Store your data in the cloud or locally
+
 👉 Monthly usage quotas
+
 👉 User authentication
+
 ... and more
 
 ## Stack
