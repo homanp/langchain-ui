@@ -10,7 +10,7 @@ The no-code interface for creating and hosting [LangChain](https://github.com/hw
 <img alt="" src="https://img.shields.io/github/repo-size/homanp/langchain-ui" />
 <img alt="GitHub Issues" src="https://img.shields.io/github/issues/homanp/langchain-ui" />
 <img alt="GitHub Pull Requests" src="https://img.shields.io/github/issues-pr/homanp/langchain-ui" />
-<img alt="Github License" src="https://img.shields.io/github/license/homanp/langchain-ui" />
+<img alt="Github License" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
 </p>
 
 ## About the project
