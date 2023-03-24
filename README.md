@@ -88,4 +88,4 @@ LangChain UI utilizes NextJS 13 `appDir`. Read more about it [here](https://next
 
 Our mission is to make it easy for anyone to create and run LLM apps in the cloud. We are super happy for any contributions you would like to make. Create new features, fix bugs or improve on infra.
 
-You can read more on how to contribute [here].
+You can read more on how to contribute [here](https://github.com/homanp/langchain-ui/blob/main/.github/CONTRIBUTING.md).
