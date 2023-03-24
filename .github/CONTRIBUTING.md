@@ -1,4 +1,4 @@
-# Contributing to LangChain
+# Contributing to LangChain UI
 
 Thanks for being interested in contributing to LangChain UI ❤️.
 We are extremely open to any and all contributions you might be intersted in making.
