@@ -26,7 +26,7 @@ export default function Login() {
                 size="sm"
                 variant="outline"
                 leftIcon={<Icon as={FaGithub} />}
-                onClick={() => signIn("github")}
+                onClick={() => signIn("github", { callbackUrl: "/app" })}
               >
                 Login with Github
               </Button>

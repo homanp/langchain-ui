@@ -6,39 +6,34 @@ const prismaClient = new PrismaClient();
 
 const promptTemplatesHander = async (request, response) => {
   const session = await getServerSession(request, response, authOptions);
+  const user = await prismaClient.user.findUnique({
+    where: { email: session.user.email },
+  });
 
   if (request.method === "GET") {
-    try {
-      const data = await prismaClient.promptTemplate.findMany({
-        where: {
-          userId: {
-            equals: session.user.id,
-          },
+    const data = await prismaClient.promptTemplate.findMany({
+      where: {
+        userId: {
+          equals: user.id,
         },
-      });
+      },
+    });
 
-      response.stats(200).json({
-        success: true,
-        data,
-      });
-    } catch (error) {
-      response.status(500).json({ succes: false, error });
-    }
+    return response.status(200).json({
+      success: true,
+      data,
+    });
   }
 
   if (request.method === "POST") {
-    try {
-      const promptTemplate = await prismaClient.promptTemplate.create({
-        data: {
-          userId: session.user.id,
-          ...request.body,
-        },
-      });
+    const promptTemplate = await prismaClient.promptTemplate.create({
+      data: {
+        userId: user.id,
+        ...request.body,
+      },
+    });
 
-      response.status(200).json({ sucess: true, data: promptTemplate });
-    } catch (error) {
-      response.status(500).json({ succes: false, error });
-    }
+    return response.status(200).json({ sucess: true, data: promptTemplate });
   }
 };
 

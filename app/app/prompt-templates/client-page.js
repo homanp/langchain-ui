@@ -1,6 +1,5 @@
 "use client";
-import React, { useCallback } from "react";
-import { useRouter } from "next/navigation";
+import React, { useCallback, useState } from "react";
 import {
   Box,
   Button,
@@ -10,6 +9,7 @@ import {
   FormHelperText,
   HStack,
   Icon,
+  IconButton,
   Spinner,
   Stack,
   Table,
@@ -22,11 +22,11 @@ import {
   useColorModeValue,
   Input,
 } from "@chakra-ui/react";
-import { TbPlus } from "react-icons/tb";
+import { TbPlus, TbTrashX } from "react-icons/tb";
 import { useAsync } from "react-use";
 import { useForm } from "react-hook-form";
 import PageHeader from "@/components/page-header";
-import { SIDEBAR_MENU } from "@/lib/sidebar";
+import { useSidebar } from "@/lib/sidebar";
 import {
   createPromptTemplate,
   getPrompTemplates,
@@ -36,16 +36,24 @@ import {
 export default function PromptTemplatesClientPage() {
   const buttonColorScheme = useColorModeValue("blackAlpha", "whiteAlpha");
   const buttonBackgroundColor = useColorModeValue("black", "white");
-  const router = useRouter();
-  const { loading: isLoading, value: promptTemplates } = useAsync(
-    async () => getPrompTemplates,
-    [getPrompTemplates]
+  const menu = useSidebar();
+  const [promptTemplates, setPromptTemplates] = useState([]);
+
+  const { loading: isLoading } = useAsync(async () => {
+    const { data } = await getPrompTemplates();
+    setPromptTemplates(data);
+
+    return data;
+  }, [getPrompTemplates, setPromptTemplates]);
+  const [showForm, setShowForm] = useState(
+    !isLoading && promptTemplates.length === 0
   );
 
   const {
     formState: { isSubmitting, errors },
     handleSubmit,
     register,
+    reset,
   } = useForm();
 
   const onSubmit = useCallback(
@@ -56,16 +64,19 @@ export default function PromptTemplatesClientPage() {
         inputs: getPromptVariables(prompt),
       };
 
-      await createPromptTemplate(payload);
-      router.refresh();
+      const { data: promptTemplate } = await createPromptTemplate(payload);
+
+      setPromptTemplates((prev) => [promptTemplate, ...prev]);
+      setShowForm();
+      reset();
     },
-    [router]
+    [reset, setPromptTemplates]
   );
 
   return (
     <Stack flex={1} paddingX={4} paddingY={4} spacing={4}>
       <PageHeader
-        icon={SIDEBAR_MENU.find(({ id }) => id === "prompt_templates").icon}
+        icon={menu.find(({ id }) => id === "prompt_templates").icon}
         title="Prompt templates"
       >
         <HStack>
@@ -74,6 +85,7 @@ export default function PromptTemplatesClientPage() {
             colorScheme={buttonColorScheme}
             backgroundColor={buttonBackgroundColor}
             size="sm"
+            onClick={() => setShowForm(true)}
           >
             New template
           </Button>
@@ -84,30 +96,29 @@ export default function PromptTemplatesClientPage() {
           <Spinner size="sm" />
         </Center>
       )}
-      {!isLoading && promptTemplates.length !== 0 && (
+      {!isLoading && !showForm && (
         <TableContainer>
           <Table size="sm">
             <Tbody>
-              <Tr>
-                <Td>inches</Td>
-                <Td>millimetres (mm)</Td>
-                <Td isNumeric>25.4</Td>
-              </Tr>
-              <Tr>
-                <Td>feet</Td>
-                <Td>centimetres (cm)</Td>
-                <Td isNumeric>30.48</Td>
-              </Tr>
-              <Tr>
-                <Td>yards</Td>
-                <Td>metres (m)</Td>
-                <Td isNumeric>0.91444</Td>
-              </Tr>
+              {promptTemplates.map(({ id, name }) => (
+                <Tr key={id}>
+                  <Td cursor="pointer" _hover={{ opacity: 0.5 }}>
+                    {name}
+                  </Td>
+                  <Td textAlign="right">
+                    <IconButton
+                      size="sm"
+                      icon={<Icon as={TbTrashX} fontSize="lg" />}
+                      variant="ghost"
+                    />
+                  </Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
         </TableContainer>
       )}
-      {!isLoading && promptTemplates.length === 0 && (
+      {showForm && (
         <Center flex={1}>
           <Container as="form" onSubmit={handleSubmit(onSubmit)}>
             <Stack>
@@ -133,10 +144,17 @@ export default function PromptTemplatesClientPage() {
                   />
                   <HStack justifyContent="flex-end">
                     <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowForm()}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
                       colorScheme={buttonColorScheme}
                       backgroundColor={buttonBackgroundColor}
                       type="sumbit"
-                      fontSize="sm"
+                      size="sm"
                       isLoading={isSubmitting}
                     >
                       Save
