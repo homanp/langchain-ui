@@ -17,6 +17,9 @@ const promptTemplatesHander = async (request, response) => {
           equals: user.id,
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     return response.status(200).json({

@@ -10,6 +10,7 @@ import {
   HStack,
   Icon,
   IconButton,
+  Input,
   Spinner,
   Stack,
   Table,
@@ -17,10 +18,10 @@ import {
   Tag,
   Tbody,
   Textarea,
+  Text,
   Tr,
   Td,
   useColorModeValue,
-  Input,
 } from "@chakra-ui/react";
 import { TbPlus, TbTrashX } from "react-icons/tb";
 import { useAsync } from "react-use";
@@ -31,11 +32,13 @@ import {
   createPromptTemplate,
   getPrompTemplates,
   getPromptVariables,
+  removePromptTemplateById,
 } from "@/lib/api";
 
 export default function PromptTemplatesClientPage() {
   const buttonColorScheme = useColorModeValue("blackAlpha", "whiteAlpha");
   const buttonBackgroundColor = useColorModeValue("black", "white");
+  const borderBottomColor = useColorModeValue("gray.50", "#333");
   const menu = useSidebar();
   const [promptTemplates, setPromptTemplates] = useState([]);
 
@@ -73,6 +76,14 @@ export default function PromptTemplatesClientPage() {
     [reset, setPromptTemplates]
   );
 
+  const handleRemovePromptTemplate = useCallback(async (promptTemplateId) => {
+    await removePromptTemplateById(promptTemplateId);
+
+    setPromptTemplates((prev) =>
+      prev.filter(({ id }) => id !== promptTemplateId)
+    );
+  }, []);
+
   return (
     <Stack flex={1} paddingX={4} paddingY={4} spacing={4}>
       <PageHeader
@@ -102,14 +113,19 @@ export default function PromptTemplatesClientPage() {
             <Tbody>
               {promptTemplates.map(({ id, name }) => (
                 <Tr key={id}>
-                  <Td cursor="pointer" _hover={{ opacity: 0.5 }}>
+                  <Td
+                    cursor="pointer"
+                    _hover={{ opacity: 0.5 }}
+                    borderBottomColor={borderBottomColor}
+                  >
                     {name}
                   </Td>
-                  <Td textAlign="right">
+                  <Td textAlign="right" borderBottomColor={borderBottomColor}>
                     <IconButton
                       size="sm"
                       icon={<Icon as={TbTrashX} fontSize="lg" />}
                       variant="ghost"
+                      onClick={() => handleRemovePromptTemplate(id)}
                     />
                   </Td>
                 </Tr>
@@ -121,51 +137,63 @@ export default function PromptTemplatesClientPage() {
       {showForm && (
         <Center flex={1}>
           <Container as="form" onSubmit={handleSubmit(onSubmit)}>
-            <Stack>
-              <FormControl isInvalid={errors?.name}>
-                <Input
-                  size="sm"
-                  placeholder="My custom prompt..."
-                  {...register("name", { required: true })}
+            <Stack spacing={6}>
+              <Stack spacing={1}>
+                <Icon
+                  fontSize="2xl"
+                  as={menu.find(({ id }) => id === "prompt_templates").icon}
                 />
-              </FormControl>
-              <FormControl isInvalid={errors?.prompt}>
-                <Box
-                  borderRadius="md"
-                  borderWidth="1px"
-                  padding={3}
-                  spacing={0}
-                >
-                  <Textarea
-                    minHeight="250px"
-                    variant="unstyled"
-                    fontSize="sm"
-                    {...register("prompt", { required: true })}
+                <Text>New prompt template</Text>
+                <Text fontSize="sm" color="gray.500">
+                  Create a prompt template to use in your chat apps
+                </Text>
+              </Stack>
+              <Stack>
+                <FormControl isInvalid={errors?.name}>
+                  <Input
+                    size="sm"
+                    placeholder="My custom prompt..."
+                    {...register("name", { required: true })}
                   />
-                  <HStack justifyContent="flex-end">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowForm()}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      colorScheme={buttonColorScheme}
-                      backgroundColor={buttonBackgroundColor}
-                      type="sumbit"
-                      size="sm"
-                      isLoading={isSubmitting}
-                    >
-                      Save
-                    </Button>
-                  </HStack>
-                </Box>
-                <FormHelperText>
-                  Type <Tag size="sm">{`{{myVariable}}`}</Tag> to insert
-                  variables into your template.
-                </FormHelperText>
-              </FormControl>
+                </FormControl>
+                <FormControl isInvalid={errors?.prompt}>
+                  <Box
+                    borderRadius="md"
+                    borderWidth="1px"
+                    padding={3}
+                    spacing={0}
+                  >
+                    <Textarea
+                      minHeight="250px"
+                      variant="unstyled"
+                      fontSize="sm"
+                      {...register("prompt", { required: true })}
+                    />
+                    <HStack justifyContent="flex-end">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowForm()}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        colorScheme={buttonColorScheme}
+                        backgroundColor={buttonBackgroundColor}
+                        type="sumbit"
+                        size="sm"
+                        isLoading={isSubmitting}
+                      >
+                        Save
+                      </Button>
+                    </HStack>
+                  </Box>
+                  <FormHelperText>
+                    Type <Tag size="sm">{`{{myVariable}}`}</Tag> to insert
+                    variables into your template.
+                  </FormHelperText>
+                </FormControl>
+              </Stack>
             </Stack>
           </Container>
         </Center>
