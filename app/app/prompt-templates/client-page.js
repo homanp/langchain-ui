@@ -57,7 +57,10 @@ export default function PromptTemplatesClientPage() {
     handleSubmit,
     register,
     reset,
+    watch,
   } = useForm();
+
+  const prompt = watch("prompt");
 
   const onSubmit = useCallback(
     async ({ name, prompt }) => {
@@ -194,6 +197,16 @@ export default function PromptTemplatesClientPage() {
                   </FormHelperText>
                 </FormControl>
               </Stack>
+              <HStack>
+                <Text fontSize="sm">Inputs:</Text>
+                <HStack>
+                  {getPromptVariables(prompt).map((variable) => (
+                    <Tag key={variable} size="sm">
+                      {variable}
+                    </Tag>
+                  ))}
+                </HStack>
+              </HStack>
             </Stack>
           </Container>
         </Center>
