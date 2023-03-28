@@ -10,7 +10,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { signIn } from "next-auth/react";
-import { FaGithub } from "react-icons/fa";
+import { TbBrandGithub } from "react-icons/tb";
 
 export default function Login() {
   return (
@@ -25,7 +25,7 @@ export default function Login() {
               <Button
                 size="sm"
                 variant="outline"
-                leftIcon={<Icon as={FaGithub} />}
+                leftIcon={<Icon as={TbBrandGithub} />}
                 onClick={() => signIn("github", { callbackUrl: "/app" })}
               >
                 Login with Github
