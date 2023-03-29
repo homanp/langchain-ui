@@ -4,14 +4,14 @@ import { authOptions } from "../auth/[...nextauth]";
 
 const prismaClient = new PrismaClient();
 
-const promptTemplatesHandler = async (request, response) => {
+const chatbotsHandler = async (request, response) => {
   const session = await getServerSession(request, response, authOptions);
   const user = await prismaClient.user.findUnique({
     where: { email: session.user.email },
   });
 
   if (request.method === "GET") {
-    const data = await prismaClient.promptTemplate.findMany({
+    const data = await prismaClient.chatbot.findMany({
       where: {
         userId: {
           equals: user.id,
@@ -29,15 +29,15 @@ const promptTemplatesHandler = async (request, response) => {
   }
 
   if (request.method === "POST") {
-    const promptTemplate = await prismaClient.promptTemplate.create({
+    const chatbot = await prismaClient.chatbot.create({
       data: {
         userId: user.id,
         ...request.body,
       },
     });
 
-    return response.status(200).json({ sucess: true, data: promptTemplate });
+    return response.status(200).json({ sucess: true, data: chatbot });
   }
 };
 
-export default promptTemplatesHandler;
+export default chatbotsHandler;
