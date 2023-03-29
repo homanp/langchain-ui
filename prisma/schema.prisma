@@ -19,6 +19,7 @@ model User {
   accounts       Account[]
   sessions       Session[]
   PromptTemplate PromptTemplate[]
+  Chatbot        Chatbot[]
 }
 
 model Account {
@@ -57,12 +58,24 @@ model VerificationToken {
 }
 
 model PromptTemplate {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   prompt    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   inputs    Json
   name      String
+  Chatbot   Chatbot[]
+}
+
+model Chatbot {
+  id              Int             @id @default(autoincrement())
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  promptTemplate  PromptTemplate? @relation(fields: [promtTemplateId], references: [id], onDelete: Cascade)
+  promtTemplateId Int?
+  name            String
 }
