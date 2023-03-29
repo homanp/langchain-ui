@@ -22,12 +22,14 @@ import {
   Tr,
   Td,
   useColorModeValue,
+  Select,
 } from "@chakra-ui/react";
 import { TbPlus, TbTrashX } from "react-icons/tb";
 import { useAsync } from "react-use";
 import { useForm } from "react-hook-form";
 import PageHeader from "@/components/page-header";
 import { useSidebar } from "@/lib/sidebar";
+import { useDocuments } from "@/lib/documents";
 import {
   createPromptTemplate,
   getPrompTemplates,
@@ -40,6 +42,7 @@ export default function DocumentsClientPageClientPage() {
   const buttonBackgroundColor = useColorModeValue("black", "white");
   const borderBottomColor = useColorModeValue("gray.50", "#333");
   const menu = useSidebar();
+  const { options } = useDocuments();
   const [promptTemplates, setPromptTemplates] = useState([]);
 
   const { loading: isLoading } = useAsync(async () => {
@@ -58,26 +61,13 @@ export default function DocumentsClientPageClientPage() {
     register,
     reset,
     watch,
-  } = useForm();
+  } = useForm({ values: { type: "csv" } });
 
-  const prompt = watch("prompt");
+  const type = watch("type");
 
-  const onSubmit = useCallback(
-    async ({ name, prompt }) => {
-      const payload = {
-        name,
-        prompt,
-        inputs: getPromptVariables(prompt),
-      };
-
-      const { data: promptTemplate } = await createPromptTemplate(payload);
-
-      setPromptTemplates((prev) => [promptTemplate, ...prev]);
-      setShowForm();
-      reset();
-    },
-    [reset, setPromptTemplates]
-  );
+  const onSubmit = useCallback(async (values) => {
+    console.log(values);
+  }, []);
 
   const handleRemovePromptTemplate = useCallback(async (promptTemplateId) => {
     await removePromptTemplateById(promptTemplateId);
@@ -144,68 +134,52 @@ export default function DocumentsClientPageClientPage() {
               <Stack spacing={1}>
                 <Icon
                   fontSize="2xl"
-                  as={menu.find(({ id }) => id === "prompt_templates").icon}
+                  as={menu.find(({ id }) => id === "documents").icon}
                 />
-                <Text>New prompt template</Text>
+                <Text>New document</Text>
                 <Text fontSize="sm" color="gray.500">
-                  Create a prompt template to use in your chat apps
+                  Combining language models with your own text data is a
+                  powerful way to differentiate them. The first step in doing
+                  this is to load the data into “documents” for later use in
+                  your chat apps.
                 </Text>
               </Stack>
               <Stack>
                 <FormControl isInvalid={errors?.name}>
                   <Input
                     size="sm"
-                    placeholder="My custom prompt..."
+                    placeholder="My document..."
                     {...register("name", { required: true })}
                   />
                 </FormControl>
-                <FormControl isInvalid={errors?.prompt}>
-                  <Box
-                    borderRadius="md"
-                    borderWidth="1px"
-                    padding={3}
-                    spacing={0}
-                  >
-                    <Textarea
-                      minHeight="250px"
-                      variant="unstyled"
-                      fontSize="sm"
-                      {...register("prompt", { required: true })}
-                    />
-                    <HStack justifyContent="flex-end">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowForm()}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        colorScheme={buttonColorScheme}
-                        backgroundColor={buttonBackgroundColor}
-                        type="sumbit"
-                        size="sm"
-                        isLoading={isSubmitting}
-                      >
-                        Save
-                      </Button>
-                    </HStack>
-                  </Box>
-                  <FormHelperText>
-                    Type <Tag size="sm">{`{{myVariable}}`}</Tag> to insert
-                    variables into your template.
-                  </FormHelperText>
+                <FormControl isInvalid={errors?.type}>
+                  <Select {...register("type", { required: true })} size="sm">
+                    {options.map(({ id, label, type }) => (
+                      <option key={id} value={type}>
+                        {label}
+                      </option>
+                    ))}
+                  </Select>
                 </FormControl>
+                <Box
+                  as={
+                    options.find(({ type: type_ }) => type_ === type).component
+                  }
+                />
               </Stack>
-              <HStack>
-                <Text fontSize="sm">Inputs:</Text>
-                <HStack>
-                  {getPromptVariables(prompt).map((variable) => (
-                    <Tag key={variable} size="sm">
-                      {variable}
-                    </Tag>
-                  ))}
-                </HStack>
+              <HStack justifyContent="flex-end">
+                <Button variant="ghost" size="sm" onClick={() => setShowForm()}>
+                  Cancel
+                </Button>
+                <Button
+                  colorScheme={buttonColorScheme}
+                  backgroundColor={buttonBackgroundColor}
+                  type="sumbit"
+                  size="sm"
+                  isLoading={isSubmitting}
+                >
+                  Save
+                </Button>
               </HStack>
             </Stack>
           </Container>

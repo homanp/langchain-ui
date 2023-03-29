@@ -69,7 +69,6 @@ export default function PromptTemplatesClientPage() {
         prompt,
         inputs: getPromptVariables(prompt),
       };
-
       const { data: promptTemplate } = await createPromptTemplate(payload);
 
       setPromptTemplates((prev) => [promptTemplate, ...prev]);
