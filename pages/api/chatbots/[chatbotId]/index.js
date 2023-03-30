@@ -26,6 +26,19 @@ const chatbotHandler = async (request, response) => {
       data,
     });
   }
+
+  if (request.method === "GET") {
+    const data = await prismaClient.chatbot.findUnique({
+      where: {
+        id: parseInt(chatbotId),
+      },
+    });
+
+    return response.status(200).json({
+      success: true,
+      data,
+    });
+  }
 };
 
 export default chatbotHandler;

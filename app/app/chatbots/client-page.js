@@ -1,6 +1,7 @@
 "use client";
 import React, { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Button,
   Center,
@@ -89,7 +90,7 @@ export default function ChatbotsClientPage() {
                     _hover={{ opacity: 0.5 }}
                     borderBottomColor={borderBottomColor}
                   >
-                    {name}
+                    <Link href={`/app/chatbots/${id}`}>{name}</Link>
                   </Td>
                   <Td textAlign="right" borderBottomColor={borderBottomColor}>
                     <IconButton
