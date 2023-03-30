@@ -1,8 +1,9 @@
 "use client";
 import PropTypes from "prop-types";
-import { Stack } from "@chakra-ui/react";
+import { GridItem, SimpleGrid, Stack } from "@chakra-ui/react";
 import { useAsync } from "react-use";
 import { getChatbotById } from "@/lib/api";
+import Chat from "@/components/chat";
 
 export default function ChatbotClientPage({ chatbotId }) {
   const { loading: isLoading, value: chatbot } = useAsync(
@@ -11,8 +12,13 @@ export default function ChatbotClientPage({ chatbotId }) {
   );
 
   return (
-    <Stack flex={1} paddingX={4} paddingY={4} spacing={4}>
-      <p>OK</p>
+    <Stack flex={1} spacing={4}>
+      <SimpleGrid columns={3} flex={1}>
+        <GridItem colSpan={2} borderRightWidth={0.5}>
+          <Chat />
+        </GridItem>
+        <GridItem></GridItem>
+      </SimpleGrid>
     </Stack>
   );
 }
