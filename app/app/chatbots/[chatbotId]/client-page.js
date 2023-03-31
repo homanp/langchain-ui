@@ -16,6 +16,8 @@ import { useAsync } from "react-use";
 import { getChatbotById } from "@/lib/api";
 import Chat from "@/components/chat";
 import CodeBlock from "@/components/code-block";
+import AssignPromptTemplate from "@/components/chat/prompt-templates";
+
 import { API_DOCS } from "@/lib/api-docs";
 
 export default function ChatbotClientPage({ chatbotId }) {
@@ -43,11 +45,7 @@ export default function ChatbotClientPage({ chatbotId }) {
                 {chatbot.name}
               </Text>
               <Stack padding={4}>
-                <Stack>
-                  <Text fontSize="sm" fontWeight={500} color="gray.500">
-                    Prompt template
-                  </Text>
-                </Stack>
+                <AssignPromptTemplate />
                 <Stack>
                   <Text fontSize="sm" fontWeight={500} color="gray.500">
                     Documents
