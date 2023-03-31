@@ -39,6 +39,20 @@ const chatbotHandler = async (request, response) => {
       data,
     });
   }
+
+  if (request.method === "PATCH") {
+    const data = await prismaClient.chatbot.update({
+      where: {
+        id: parseInt(chatbotId),
+      },
+      data: { ...request.body },
+    });
+
+    return response.status(200).json({
+      success: true,
+      data,
+    });
+  }
 };
 
 export default chatbotHandler;

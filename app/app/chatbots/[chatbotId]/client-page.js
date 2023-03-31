@@ -1,11 +1,9 @@
 "use client";
+import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
 import {
-  Box,
-  Button,
   Center,
   GridItem,
-  HStack,
   SimpleGrid,
   Spinner,
   Stack,
@@ -21,11 +19,17 @@ import AssignPromptTemplate from "@/components/chat/prompt-templates";
 import { API_DOCS } from "@/lib/api-docs";
 
 export default function ChatbotClientPage({ chatbotId }) {
-  const { loading: isLoading, value: chatbot } = useAsync(async () => {
+  const [chatbot, setChatbot] = useState();
+  const { loading: isLoading } = useAsync(async () => {
     const { data } = await getChatbotById(chatbotId);
 
-    return data;
+    setChatbot(data);
   }, [chatbotId, getChatbotById]);
+
+  const handleChange = useCallback(
+    (values) => setChatbot((prev) => ({ ...prev, ...values })),
+    []
+  );
 
   return (
     <Stack flex={1} spacing={4}>
@@ -41,19 +45,22 @@ export default function ChatbotClientPage({ chatbotId }) {
           </GridItem>
           <GridItem>
             <Stack divider={<StackDivider />} spacing={0}>
-              <Text padding={4} fontWeight={500}>
+              <Text paddingY={4} paddingX={6} fontSize="sm" fontWeight={500}>
                 {chatbot.name}
               </Text>
-              <Stack padding={4}>
-                <AssignPromptTemplate />
+              <Stack paddingY={4} paddingX={6}>
                 <Stack>
                   <Text fontSize="sm" fontWeight={500} color="gray.500">
-                    Documents
+                    Provider
                   </Text>
                 </Stack>
+                <AssignPromptTemplate
+                  chatbot={chatbot}
+                  onChange={handleChange}
+                />
                 <Stack>
                   <Text fontSize="sm" fontWeight={500} color="gray.500">
-                    Tools
+                    Datasources
                   </Text>
                 </Stack>
                 <Stack>
@@ -61,6 +68,12 @@ export default function ChatbotClientPage({ chatbotId }) {
                     Plugins
                   </Text>
                 </Stack>
+                <Stack>
+                  <Text fontSize="sm" fontWeight={500} color="gray.500">
+                    Tools
+                  </Text>
+                </Stack>
+
                 <Stack>
                   <Text fontSize="sm" fontWeight={500} color="gray.500">
                     API
