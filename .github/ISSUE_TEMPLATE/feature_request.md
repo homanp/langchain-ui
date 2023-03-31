@@ -1,9 +1,9 @@
 ---
-name: "🚀 Feature request"
+name: 🚀 Feature request
 about: Suggest an idea for improving Langchain UI
-title: ""
-labels: "type:Enhancement"
-assignees: ""
+title:
+labels: enhancement
+assignees:
 ---
 
 ### Is your proposal related to a problem?
