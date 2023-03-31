@@ -12,7 +12,7 @@ import { TbSend } from "react-icons/tb";
 import autosize from "autosize";
 
 export default function ChatInput({ isLoading, onSubmit }) {
-  const backgroundColor = useColorModeValue("gray.100", "gray.700");
+  const backgroundColor = useColorModeValue("gray.100", "#2F3239");
   const iconColor = useColorModeValue("gray.500", "white");
   const [message, setMessage] = useState();
   const textareaReference = useRef();

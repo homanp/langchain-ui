@@ -1,8 +1,11 @@
 "use client";
 import PropTypes from "prop-types";
 import {
+  Box,
+  Button,
   Center,
   GridItem,
+  HStack,
   SimpleGrid,
   Spinner,
   Stack,
@@ -12,6 +15,8 @@ import {
 import { useAsync } from "react-use";
 import { getChatbotById } from "@/lib/api";
 import Chat from "@/components/chat";
+import CodeBlock from "@/components/code-block";
+import { API_DOCS } from "@/lib/api-docs";
 
 export default function ChatbotClientPage({ chatbotId }) {
   const { loading: isLoading, value: chatbot } = useAsync(async () => {
@@ -19,8 +24,6 @@ export default function ChatbotClientPage({ chatbotId }) {
 
     return data;
   }, [chatbotId, getChatbotById]);
-
-  console.log(chatbot);
 
   return (
     <Stack flex={1} spacing={4}>
@@ -64,6 +67,10 @@ export default function ChatbotClientPage({ chatbotId }) {
                   <Text fontSize="sm" fontWeight={500} color="gray.500">
                     API
                   </Text>
+                  <Text fontSize="sm">
+                    Interact with your chatbot using the following API call
+                  </Text>
+                  <CodeBlock items={API_DOCS} />
                 </Stack>
                 <Stack>
                   <Text fontSize="sm" fontWeight={500} color="gray.500">
