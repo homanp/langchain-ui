@@ -5,25 +5,34 @@ import {
   Button,
   Center,
   HStack,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverCloseButton,
   Spinner,
   Stack,
   Text,
+  useColorModeValue,
+  Icon,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useAsync } from "react-use";
+import { useAsync, useAsyncFn } from "react-use";
 import { getPrompTemplates, updateChatbotById } from "@/lib/api";
-import PopoverContext from "../popover-context";
+import { TbChevronDown } from "react-icons/tb";
 
 export default function AssignPromptTemplate({ chatbot, onChange }) {
-  const router = useRouter();
-  const { isOpen, onClose, onOpen } = useDisclosure();
-  const { loading: isLoading, value: promptTemplates } = useAsync(async () => {
-    const { data } = await getPrompTemplates();
+  const popoverBackgroundColor = useColorModeValue("white", "#2F3239");
+  const { isOpen, onToggle, onClose } = useDisclosure();
+  const { loading: isLoading, value: promptTemplates = [] } =
+    useAsync(async () => {
+      const { data } = await getPrompTemplates();
 
-    return data;
-  }, []);
+      return data;
+    }, []);
 
-  const handleSelect = useCallback(
+  const [{ loading: isSelectingPromptTemplate }, handleSelect] = useAsyncFn(
     async (id) => {
       const { data } = await updateChatbotById(chatbot.id, {
         ...chatbot,
@@ -31,48 +40,69 @@ export default function AssignPromptTemplate({ chatbot, onChange }) {
       });
 
       onChange(data);
-      onClose();
-
-      router.refresh();
+      onToggle();
     },
-    [chatbot, onChange, onClose, router]
+    [onChange, onToggle, updateChatbotById]
   );
 
   return (
-    <Stack spacing={0}>
+    <Stack spacing={1} alignItems="flex-start">
       <Text fontSize="sm" fontWeight={500} color="gray.500">
         Prompt templates
       </Text>
-      <HStack spacing={1}>
-        <Text fontSize="sm">{chatbot.promtTemplateId}</Text>
-        <Text>-</Text>
-        <PopoverContext
-          title="Prompt templates"
-          triggerTitle="assign template"
-          onClose={onClose}
-          onOpen={onOpen}
-          isOpen={isOpen}
+      <Popover placement="bottom-start" isOpen={isOpen} onClose={onClose}>
+        <PopoverTrigger>
+          <Button
+            onClick={onToggle}
+            fontWeight="normal"
+            size="sm"
+            isLoading={isLoading || isSelectingPromptTemplate}
+            rightIcon={<Icon as={TbChevronDown} />}
+          >
+            {
+              promptTemplates.find(({ id }) => id === chatbot.promtTemplateId)
+                ?.name
+            }
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent
+          maxWidth="3xs"
+          backgroundColor={popoverBackgroundColor}
+          overflow="hidden"
         >
-          {isLoading && (
-            <Center marginY={10}>
-              <Spinner size="sm" />
-            </Center>
-          )}
-          {!isLoading &&
-            promptTemplates.map(({ id, name }) => (
-              <Button
-                key={id}
-                size="sm"
-                variant="ghost"
-                fontWeight="normal"
-                justifyContent="flex-start"
-                onClick={() => handleSelect(id)}
-              >
-                {name}
-              </Button>
-            ))}
-        </PopoverContext>
-      </HStack>
+          <PopoverCloseButton />
+          <PopoverHeader fontSize="sm" fontWeight="500">
+            Prompt templates
+          </PopoverHeader>
+          <PopoverBody
+            fontSize="sm"
+            paddingX={1}
+            maxHeight="200px"
+            overflowY="scroll"
+          >
+            <Stack>
+              {isLoading && (
+                <Center marginY={10}>
+                  <Spinner size="sm" />
+                </Center>
+              )}
+              {!isLoading &&
+                promptTemplates.map(({ id, name }) => (
+                  <Button
+                    key={id}
+                    size="sm"
+                    variant="ghost"
+                    fontWeight="normal"
+                    justifyContent="flex-start"
+                    onClick={() => handleSelect(id)}
+                  >
+                    {name}
+                  </Button>
+                ))}
+            </Stack>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
     </Stack>
   );
 }
