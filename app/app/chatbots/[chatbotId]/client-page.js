@@ -41,7 +41,7 @@ export default function ChatbotClientPage({ chatbotId }) {
       {!isLoading && (
         <SimpleGrid columns={3} flex={1}>
           <GridItem colSpan={2} borderRightWidth={0.5}>
-            <Chat />
+            <Chat id={chatbotId} />
           </GridItem>
           <GridItem>
             <Stack divider={<StackDivider />} spacing={0}>

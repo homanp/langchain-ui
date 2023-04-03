@@ -34,13 +34,14 @@ export default function AssignPromptTemplate({ chatbot, onChange }) {
 
   const [{ loading: isSelectingPromptTemplate }, handleSelect] = useAsyncFn(
     async (id) => {
+      onToggle();
+
       const { data } = await updateChatbotById(chatbot.id, {
         ...chatbot,
         promtTemplateId: id,
       });
 
       onChange(data);
-      onToggle();
     },
     [onChange, onToggle, updateChatbotById]
   );
