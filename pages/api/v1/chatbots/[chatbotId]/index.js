@@ -45,7 +45,7 @@ const chatbotHandler = async (request, response) => {
   ]);
 
   function handleNewToken(token) {
-    res.write(`${token}`);
+    console.log(`${token}`);
   }
 
   const chain = new ConversationChain({
@@ -55,7 +55,7 @@ const chatbotHandler = async (request, response) => {
 
   return response
     .status(200)
-    .json({ success: true, data: await chain.call({ message }) });
+    .json({ success: true, data: await chain.call({ message }), agent: "ai" });
 };
 
 export default chatbotHandler;

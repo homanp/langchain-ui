@@ -1,18 +1,25 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
 import { Stack } from "@chakra-ui/react";
-import { useAsyncFn } from "react-use";
 import ChatInput from "./input";
 import ChatOuput from "./output";
 import { sendChatMessage } from "@/lib/api";
 
 export default function Chat({ id, ...properties }) {
-  const [{ loading: isSendingMessage }, onSubmit] = useAsyncFn(
+  const [messages, setMessages] = useState([]);
+  const [isSendingMessage, setIsSendingMessage] = useState();
+
+  const onSubmit = useCallback(
     async (values) => {
+      setIsSendingMessage(true);
+
       const response = await sendChatMessage(id, values);
-      console.log(response);
+
+      setMessages((previousMessages) => [...previousMessages, response]);
+
+      setIsSendingMessage();
     },
-    []
+    [id]
   );
 
   return (
@@ -22,7 +29,7 @@ export default function Chat({ id, ...properties }) {
       justifyContent="space-between"
       minHeight="100vh"
     >
-      <ChatOuput />
+      <ChatOuput isLoading={isSendingMessage} messages={messages} />
       <ChatInput isLoading={isSendingMessage} onSubmit={onSubmit} />
     </Stack>
   );
