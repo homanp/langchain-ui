@@ -11,7 +11,7 @@ import {
 import { TbSend } from "react-icons/tb";
 import autosize from "autosize";
 
-export default function ChatInput({ isLoading, onSubmit }) {
+export default function ChatInput({ isLoading, onSubmit, ...properties }) {
   const backgroundColor = useColorModeValue("gray.100", "#2F3239");
   const iconColor = useColorModeValue("gray.500", "white");
   const [message, setMessage] = useState();
@@ -42,7 +42,7 @@ export default function ChatInput({ isLoading, onSubmit }) {
   }, []);
 
   return (
-    <Container alignSelf="center" maxWidth="4xl">
+    <Container alignSelf="center" maxWidth="4xl" {...properties}>
       <HStack
         backgroundColor={backgroundColor}
         borderWidth="1px"

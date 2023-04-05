@@ -12,6 +12,10 @@ export default function Chat({ id, ...properties }) {
   const onSubmit = useCallback(
     async (values) => {
       setIsSendingMessage(true);
+      setMessages((previousMessages) => [
+        ...previousMessages,
+        { data: { response: values } },
+      ]);
 
       const response = await sendChatMessage(id, values);
 
@@ -23,14 +27,13 @@ export default function Chat({ id, ...properties }) {
   );
 
   return (
-    <Stack
-      {...properties}
-      padding={4}
-      justifyContent="space-between"
-      minHeight="100vh"
-    >
+    <Stack {...properties} justifyContent="space-between" minHeight="100vh">
       <ChatOuput isLoading={isSendingMessage} messages={messages} />
-      <ChatInput isLoading={isSendingMessage} onSubmit={onSubmit} />
+      <ChatInput
+        isLoading={isSendingMessage}
+        onSubmit={onSubmit}
+        paddingBottom={6}
+      />
     </Stack>
   );
 }

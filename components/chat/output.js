@@ -1,9 +1,7 @@
 import React from "react";
 import {
   Avatar,
-  Box,
   HStack,
-  Spinner,
   Stack,
   Text,
   useColorModeValue,
@@ -13,19 +11,26 @@ import { BeatLoader } from "react-spinners";
 
 export default function ChatOuput({ messages, isLoading }) {
   const loaderColor = useColorModeValue("gray.100", "white");
+  const unevenBackgroundColor = useColorModeValue("gray.100", "#2F3239");
 
   return (
     <Stack flex={1}>
       {messages.map(({ agent, data: { response } }, index) => (
-        <HStack key={index}>
-          <Text>{agent}</Text>
-          <Text>{response}</Text>
+        <HStack
+          padding={4}
+          key={index}
+          alignItems="flex-start"
+          spacing={6}
+          backgroundColor={index % 2 !== 0 && unevenBackgroundColor}
+        >
+          <Avatar src={agent ? "/chatbot.png" : "/user.png"} size="xs" />
+          <Text fontSize="sm">{response}</Text>
         </HStack>
       ))}
       {isLoading && (
-        <HStack>
-          <Avatar size="sm" src="/chatbot.png" />
-          <Stack borderRadius="full" borderWidth="1px" padding={2}>
+        <HStack padding={4} backgroundColor={unevenBackgroundColor}>
+          <Avatar size="xs" src="/chatbot.png" />
+          <Stack borderRadius="full" borderWidth="1px" padding={1}>
             <BeatLoader color={loaderColor} size={8} />
           </Stack>
         </HStack>
