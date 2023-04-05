@@ -36,8 +36,10 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.43.7",
     "react-icons": "^4.8.0",
+    "react-markdown": "^8.0.6",
     "react-spinners": "^0.13.8",
     "react-use": "^17.4.0",
+    "remark-gfm": "^3.0.1",
     "typeorm": "^0.3.12"
   },
   "devDependencies": {

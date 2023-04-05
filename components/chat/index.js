@@ -27,8 +27,17 @@ export default function Chat({ id, ...properties }) {
   );
 
   return (
-    <Stack {...properties} justifyContent="space-between" minHeight="100vh">
-      <ChatOuput isLoading={isSendingMessage} messages={messages} />
+    <Stack
+      {...properties}
+      minHeight="100vh"
+      maxHeight="100vh"
+      justifyContent="space-between"
+    >
+      <ChatOuput
+        isLoading={isSendingMessage}
+        messages={messages}
+        overflow="scroll"
+      />
       <ChatInput
         isLoading={isSendingMessage}
         onSubmit={onSubmit}
