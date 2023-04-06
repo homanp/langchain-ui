@@ -32,11 +32,12 @@ export default function Chat({ id, ...properties }) {
       minHeight="100vh"
       maxHeight="100vh"
       justifyContent="space-between"
+      spacing={6}
     >
       <ChatOuput
         isLoading={isSendingMessage}
         messages={messages}
-        overflow="scroll"
+        overflowY="scroll"
       />
       <ChatInput
         isLoading={isSendingMessage}
