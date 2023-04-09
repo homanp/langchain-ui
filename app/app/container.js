@@ -1,12 +1,11 @@
 "use client";
 import React from "react";
-import { Flex, useColorModeValue } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import Sidebar from "./sidebar";
 
 export default function AppContainer({ children }) {
-  const backgroundColor = useColorModeValue("white", "#131416");
   return (
-    <Flex height="100vh" backgroundColor={backgroundColor}>
+    <Flex height="100vh">
       <Sidebar />
       {children}
     </Flex>
