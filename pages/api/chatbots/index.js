@@ -2,9 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
 
-const prismaClient = new PrismaClient();
-
 const chatbotsHandler = async (request, response) => {
+  const prismaClient = new PrismaClient();
   const session = await getServerSession(request, response, authOptions);
   const user = await prismaClient.user.findUnique({
     where: { email: session.user.email },
