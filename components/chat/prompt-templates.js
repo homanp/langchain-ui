@@ -33,12 +33,12 @@ export default function AssignPromptTemplate({ chatbot, onChange }) {
     }, []);
 
   const [{ loading: isSelectingPromptTemplate }, handleSelect] = useAsyncFn(
-    async (id) => {
+    async (promptTemplateId) => {
       onToggle();
-
-      const { data } = await updateChatbotById(chatbot.id, {
-        ...chatbot,
-        promptTemplateId: id,
+      const { id, chatbotData } = chatbot;
+      const { data } = await updateChatbotById(id, {
+        ...chatbotData,
+        promptTemplateId: promptTemplateId || null,
       });
 
       onChange(data);
@@ -85,6 +85,15 @@ export default function AssignPromptTemplate({ chatbot, onChange }) {
                   <Spinner size="sm" />
                 </Center>
               )}
+              <Button
+                size="sm"
+                variant="ghost"
+                fontWeight="normal"
+                justifyContent="flex-start"
+                onClick={() => handleSelect()}
+              >
+                None
+              </Button>
               {!isLoading &&
                 promptTemplates.map(({ id, name }) => (
                   <Button
