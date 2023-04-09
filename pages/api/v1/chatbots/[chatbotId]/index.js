@@ -24,7 +24,7 @@ const chatbotHandler = async (request, response) => {
       .json({ success: false, error: "Required field {message} is missing" });
   }
 
-  const [{ promtTemplateId }, messages] = await Promise.all([
+  const [{ promptTemplateId }, messages] = await Promise.all([
     prismaClient.chatbot.findUnique({
       where: { id: parseInt(chatbotId) },
     }),
@@ -33,9 +33,9 @@ const chatbotHandler = async (request, response) => {
     }),
   ]);
 
-  const promptTemplate = promtTemplateId
+  const promptTemplate = promptTemplateId
     ? await prismaClient.promptTemplate.findUnique({
-        where: { id: promtTemplateId },
+        where: { id: promptTemplateId },
       })
     : undefined;
 

@@ -38,7 +38,7 @@ export default function AssignPromptTemplate({ chatbot, onChange }) {
 
       const { data } = await updateChatbotById(chatbot.id, {
         ...chatbot,
-        promtTemplateId: id,
+        promptTemplateId: id,
       });
 
       onChange(data);
@@ -60,7 +60,7 @@ export default function AssignPromptTemplate({ chatbot, onChange }) {
             isLoading={isLoading || isSelectingPromptTemplate}
             rightIcon={<Icon as={TbChevronDown} />}
           >
-            {promptTemplates.find(({ id }) => id === chatbot.promtTemplateId)
+            {promptTemplates.find(({ id }) => id === chatbot.promptTemplateId)
               ?.name || "Select template"}
           </Button>
         </PopoverTrigger>
@@ -77,7 +77,7 @@ export default function AssignPromptTemplate({ chatbot, onChange }) {
             fontSize="sm"
             paddingX={1}
             maxHeight="200px"
-            overflowY="scroll"
+            overflowY="auto"
           >
             <Stack>
               {isLoading && (
