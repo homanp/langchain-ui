@@ -1,5 +1,7 @@
 "use client";
 import React, { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Button,
   Center,
@@ -25,6 +27,7 @@ export default function ChatbotsClientPage() {
   const buttonColorScheme = useColorModeValue("blackAlpha", "whiteAlpha");
   const buttonBackgroundColor = useColorModeValue("black", "white");
   const borderBottomColor = useColorModeValue("gray.50", "#333");
+  const router = useRouter();
   const menu = useSidebar();
   const [chatbots, setChatbots] = useState([]);
 
@@ -42,8 +45,8 @@ export default function ChatbotsClientPage() {
       };
       const { data: chatbot } = await createChatbot(payload);
 
-      return chatbot;
-    }, [createChatbot]);
+      router.push(`/app/chatbots/${chatbot.id}`);
+    }, [createChatbot, router]);
 
   const handleRemoveChatbot = useCallback(async (chatbotId) => {
     await removeChatbotById(chatbotId);
@@ -87,7 +90,7 @@ export default function ChatbotsClientPage() {
                     _hover={{ opacity: 0.5 }}
                     borderBottomColor={borderBottomColor}
                   >
-                    {name}
+                    <Link href={`/app/chatbots/${id}`}>{name}</Link>
                   </Td>
                   <Td textAlign="right" borderBottomColor={borderBottomColor}>
                     <IconButton
