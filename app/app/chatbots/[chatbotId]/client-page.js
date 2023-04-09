@@ -53,7 +53,7 @@ export default function ChatbotClientPage({ chatbotId }) {
                   <Text fontSize="sm" fontWeight={500} color="gray.500">
                     Provider
                   </Text>
-                  <Text fontSize="sm">Coming soon...</Text>
+                  <Text fontSize="sm">OpenAI</Text>
                 </Stack>
                 <AssignPromptTemplate
                   chatbot={chatbot}
@@ -73,24 +73,12 @@ export default function ChatbotClientPage({ chatbotId }) {
                 </Stack>
                 <Stack>
                   <Text fontSize="sm" fontWeight={500} color="gray.500">
-                    Tools
-                  </Text>
-                  <Text fontSize="sm">Coming soon...</Text>
-                </Stack>
-                <Stack>
-                  <Text fontSize="sm" fontWeight={500} color="gray.500">
                     API
                   </Text>
                   <Text fontSize="sm">
                     Interact with your chatbot using the following API call
                   </Text>
                   <CodeBlock items={API_DOCS} />
-                </Stack>
-                <Stack>
-                  <Text fontSize="sm" fontWeight={500} color="gray.500">
-                    Embed
-                  </Text>
-                  <Text fontSize="sm">Coming soon...</Text>
                 </Stack>
               </Stack>
             </Stack>

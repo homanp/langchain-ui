@@ -2,11 +2,8 @@ import React, { useEffect, useRef } from "react";
 import {
   Avatar,
   Box,
-  Center,
-  Container,
   HStack,
   Stack,
-  Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 import ReactMarkdown from "react-markdown";
@@ -27,7 +24,7 @@ export default function ChatOuput({ messages, isLoading, ...properties }) {
 
   return (
     <Stack flex={1} maxWidth="100%" {...properties}>
-      <Stack>
+      <Stack spacing={0}>
         {messages.map(({ agent, data: { response } }, index) => (
           <Box
             ref={

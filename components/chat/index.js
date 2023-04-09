@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Stack } from "@chakra-ui/react";
 import ChatInput from "./input";
 import ChatOuput from "./output";
-import { sendChatMessage } from "@/lib/api";
+import { createChatbotMessage, sendChatMessage } from "@/lib/api";
 
 export default function Chat({ id, ...properties }) {
   const [messages, setMessages] = useState([]);
@@ -17,7 +17,20 @@ export default function Chat({ id, ...properties }) {
         { data: { response: values } },
       ]);
 
-      const response = await sendChatMessage(id, values);
+      await createChatbotMessage(id, {
+        message: values,
+        agent: "user",
+      });
+
+      const response = await sendChatMessage({
+        id,
+        message: values,
+      });
+
+      createChatbotMessage(id, {
+        message: response.data.response,
+        agent: "ai",
+      });
 
       setMessages((previousMessages) => [...previousMessages, response]);
 
@@ -37,7 +50,7 @@ export default function Chat({ id, ...properties }) {
       <ChatOuput
         isLoading={isSendingMessage}
         messages={messages}
-        overflowY="scroll"
+        overflowY="auto"
       />
       <ChatInput
         isLoading={isSendingMessage}

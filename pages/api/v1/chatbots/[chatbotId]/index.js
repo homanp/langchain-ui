@@ -6,6 +6,9 @@ import {
   HumanMessagePromptTemplate,
   SystemMessagePromptTemplate,
 } from "langchain/prompts";
+import { MessagesPlaceholder } from "langchain/prompts";
+import { BufferMemory, ChatMessageHistory } from "langchain/memory";
+import { HumanChatMessage, AIChatMessage } from "langchain/schema";
 import { PrismaClient } from "@prisma/client";
 import { DEFAULT_PROMPT_TEMPLATE } from "@/lib/prompt-template";
 
@@ -21,12 +24,29 @@ const chatbotHandler = async (request, response) => {
       .json({ success: false, error: "Required field {message} is missing" });
   }
 
-  const chatbot = await prismaClient.chatbot.findUnique({
-    where: { id: parseInt(chatbotId) },
-  });
+  const [{ promtTemplateId }, messages] = await Promise.all([
+    prismaClient.chatbot.findUnique({
+      where: { id: parseInt(chatbotId) },
+    }),
+    prismaClient.chatbotMessage.findMany({
+      where: { chatbotId: parseInt(chatbotId) },
+    }),
+  ]);
 
-  const promptTemplate = await prismaClient.promptTemplate.findUnique({
-    where: { id: chatbot.promtTemplateId },
+  const promptTemplate = promtTemplateId
+    ? await prismaClient.promptTemplate.findUnique({
+        where: { id: promtTemplateId },
+      })
+    : undefined;
+
+  const history = messages.map(({ agent, message }) =>
+    agent === "ai" ? new AIChatMessage(message) : new HumanChatMessage(message)
+  );
+
+  const memory = new BufferMemory({
+    memoryKey: "history",
+    chatHistory: new ChatMessageHistory(history),
+    returnMessages: true,
   });
 
   const llm = new ChatOpenAI({
@@ -40,7 +60,10 @@ const chatbotHandler = async (request, response) => {
   });
 
   const prompt = ChatPromptTemplate.fromPromptMessages([
-    SystemMessagePromptTemplate.fromTemplate(DEFAULT_PROMPT_TEMPLATE),
+    SystemMessagePromptTemplate.fromTemplate(
+      promptTemplate?.prompt || DEFAULT_PROMPT_TEMPLATE
+    ),
+    new MessagesPlaceholder("history"),
     HumanMessagePromptTemplate.fromTemplate("{message}"),
   ]);
 
@@ -49,13 +72,18 @@ const chatbotHandler = async (request, response) => {
   }
 
   const chain = new ConversationChain({
+    memory,
     prompt,
     llm,
   });
 
-  return response
-    .status(200)
-    .json({ success: true, data: await chain.call({ message }), agent: "ai" });
+  return response.status(200).json({
+    success: true,
+    data: await chain.call({
+      message,
+    }),
+    agent: "ai",
+  });
 };
 
 export default chatbotHandler;

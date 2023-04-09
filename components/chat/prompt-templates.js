@@ -60,10 +60,8 @@ export default function AssignPromptTemplate({ chatbot, onChange }) {
             isLoading={isLoading || isSelectingPromptTemplate}
             rightIcon={<Icon as={TbChevronDown} />}
           >
-            {
-              promptTemplates.find(({ id }) => id === chatbot.promtTemplateId)
-                ?.name
-            }
+            {promptTemplates.find(({ id }) => id === chatbot.promtTemplateId)
+              ?.name || "Select template"}
           </Button>
         </PopoverTrigger>
         <PopoverContent
