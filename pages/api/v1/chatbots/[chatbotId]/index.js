@@ -1,6 +1,5 @@
 import { ChatOpenAI } from "langchain/chat_models";
 import { ConversationChain } from "langchain/chains";
-import { CallbackManager } from "langchain/callbacks";
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
@@ -12,9 +11,8 @@ import { HumanChatMessage, AIChatMessage } from "langchain/schema";
 import { PrismaClient } from "@prisma/client";
 import { DEFAULT_PROMPT_TEMPLATE } from "@/lib/prompt-template";
 
-const prismaClient = new PrismaClient();
-
 const chatbotHandler = async (request, response) => {
+  const prismaClient = new PrismaClient();
   const { chatbotId } = request.query;
   const { message } = request.body;
 
@@ -51,12 +49,6 @@ const chatbotHandler = async (request, response) => {
 
   const llm = new ChatOpenAI({
     temperature: 0,
-    streaming: true,
-    callbackManager: CallbackManager.fromHandlers({
-      handleLLMNewToken(token) {
-        handleNewToken(token);
-      },
-    }),
   });
 
   const prompt = ChatPromptTemplate.fromPromptMessages([
@@ -66,10 +58,6 @@ const chatbotHandler = async (request, response) => {
     new MessagesPlaceholder("history"),
     HumanMessagePromptTemplate.fromTemplate("{message}"),
   ]);
-
-  function handleNewToken(token) {
-    console.log(`${token}`);
-  }
 
   const chain = new ConversationChain({
     memory,
