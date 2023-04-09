@@ -3,6 +3,8 @@ import {
   Avatar,
   Box,
   HStack,
+  Icon,
+  IconButton,
   Stack,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -10,6 +12,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PropTypes from "prop-types";
 import { BeatLoader } from "react-spinners";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { TbCopy } from "react-icons/tb";
 
 export default function ChatOuput({ messages, isLoading, ...properties }) {
   const loaderColor = useColorModeValue("gray.100", "white");
@@ -42,7 +47,34 @@ export default function ChatOuput({ messages, isLoading, ...properties }) {
             >
               <Avatar src={agent ? "/chatbot.png" : "/user.png"} size="xs" />
               <Stack spacing={4} fontSize="sm">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                <ReactMarkdown
+                  components={{
+                    pre: (pre) => {
+                      const codeChunk = pre.node.children[0].children[0].value;
+
+                      const handleCopyCode = () => {
+                        navigator.clipboard.writeText(codeChunk);
+                      };
+
+                      return (
+                        <Box position="relative">
+                          <IconButton
+                            position="absolute"
+                            top={4}
+                            right={2}
+                            size="sm"
+                            icon={<Icon as={TbCopy} fontSize="lg" />}
+                            onClick={() => handleCopyCode()}
+                          />
+                          <SyntaxHighlighter style={dracula}>
+                            {pre.children[0].props.children[0]}
+                          </SyntaxHighlighter>
+                        </Box>
+                      );
+                    },
+                  }}
+                  remarkPlugins={[remarkGfm]}
+                >
                   {response}
                 </ReactMarkdown>
               </Stack>
