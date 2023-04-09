@@ -43,11 +43,11 @@ Features:
 - [x] Bring your own Auth provider
 - [x] Chatbots
 - [x] Prompt templates
-[] API endpoints to chatbot
-[] External datasources
-[] chatGPT plugins
-[] Chatbots themes
-[] Chatbot embedding
+- [ ] API endpoints to chatbot
+- [ ] External datasources
+- [ ] chatGPT plugins
+- [ ] Chatbots themes
+- [ ] Chatbot embedding
 
 ## Stack
 
