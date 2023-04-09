@@ -2,7 +2,7 @@
 
 # 🧬 LangChain UI
 
-The no-code opensource chat-ai toolkit built on top of [LangChain](https://github.com/hwchase17/langchain).
+The no-code open source chat-ai toolkit built on top of [LangChain](https://github.com/hwchase17/langchain).
 
 <p>
 <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/homanp/langchain-ui" />
