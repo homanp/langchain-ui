@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {
   Center,
@@ -14,7 +14,6 @@ import { useAsync } from "react-use";
 import { getChatbotById } from "@/lib/api";
 import Chat from "@/components/chat";
 import CodeBlock from "@/components/code-block";
-import AssignPromptTemplate from "@/components/chat/prompt-templates";
 
 import { API_DOCS } from "@/lib/api-docs";
 
@@ -25,11 +24,6 @@ export default function ChatbotClientPage({ chatbotId }) {
 
     setChatbot(data);
   }, [chatbotId, getChatbotById]);
-
-  const handleChange = useCallback(
-    (values) => setChatbot((prev) => ({ ...prev, ...values })),
-    []
-  );
 
   return (
     <Stack flex={1} spacing={4}>
@@ -49,16 +43,6 @@ export default function ChatbotClientPage({ chatbotId }) {
                 {chatbot.name}
               </Text>
               <Stack paddingY={4} paddingX={6}>
-                <Stack>
-                  <Text fontSize="sm" fontWeight={500} color="gray.500">
-                    Provider
-                  </Text>
-                  <Text fontSize="sm">OpenAI</Text>
-                </Stack>
-                <AssignPromptTemplate
-                  chatbot={chatbot}
-                  onChange={handleChange}
-                />
                 <Stack>
                   <Text fontSize="sm" fontWeight={500} color="gray.500">
                     Datasources
