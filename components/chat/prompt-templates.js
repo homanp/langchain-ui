@@ -33,12 +33,12 @@ export default function AssignPromptTemplate({ chatbot, onChange }) {
     }, []);
 
   const [{ loading: isSelectingPromptTemplate }, handleSelect] = useAsyncFn(
-    async (id) => {
+    async (promptTemplateId) => {
       onToggle();
-
-      const { data } = await updateChatbotById(chatbot.id, {
-        ...chatbot,
-        promtTemplateId: id,
+      const { id, chatbotData } = chatbot;
+      const { data } = await updateChatbotById(id, {
+        ...chatbotData,
+        promptTemplateId: promptTemplateId || null,
       });
 
       onChange(data);
@@ -60,7 +60,7 @@ export default function AssignPromptTemplate({ chatbot, onChange }) {
             isLoading={isLoading || isSelectingPromptTemplate}
             rightIcon={<Icon as={TbChevronDown} />}
           >
-            {promptTemplates.find(({ id }) => id === chatbot.promtTemplateId)
+            {promptTemplates.find(({ id }) => id === chatbot.promptTemplateId)
               ?.name || "Select template"}
           </Button>
         </PopoverTrigger>
@@ -77,7 +77,7 @@ export default function AssignPromptTemplate({ chatbot, onChange }) {
             fontSize="sm"
             paddingX={1}
             maxHeight="200px"
-            overflowY="scroll"
+            overflowY="auto"
           >
             <Stack>
               {isLoading && (
@@ -85,6 +85,15 @@ export default function AssignPromptTemplate({ chatbot, onChange }) {
                   <Spinner size="sm" />
                 </Center>
               )}
+              <Button
+                size="sm"
+                variant="ghost"
+                fontWeight="normal"
+                justifyContent="flex-start"
+                onClick={() => handleSelect()}
+              >
+                None
+              </Button>
               {!isLoading &&
                 promptTemplates.map(({ id, name }) => (
                   <Button
