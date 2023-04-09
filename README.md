@@ -2,7 +2,7 @@
 
 # 🧬 LangChain UI
 
-The no-code interface for creating and hosting [LangChain](https://github.com/hwchase17/langchain) LLM Agents, Chatbots and more.
+The no-code opensource chat-ai toolkit built on top of [LangChain](https://github.com/hwchase17/langchain).
 
 <p>
 <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/homanp/langchain-ui" />
@@ -15,23 +15,39 @@ The no-code interface for creating and hosting [LangChain](https://github.com/hw
 
 ## About the project
 
-LangChain UI enables anyone to create and host LLM Agents and Chatbots using a no-code type of inteface.
+LangChain UI enables anyone to create and host chatbots using a no-code type of inteface.
 
 Features:
 
-👉 Create, configure and save Prompt templates, Document loaders and Indexes
+👉 Create custom chatGPT like Chatbot.
 
-👉 Create custom Agents, Chains and Chatbot apps
+👉 Give context to the chatbot using external datasources, chatGPT plugins and prompts.
 
-👉 Dedicated API endpoint for each app
+👉 Dedicated API endpoint for each Chatbot.
 
-👉 Store your data in the cloud or locally
+👉 Bring your own DB
 
-👉 Monthly usage quotas
+👉 Bring your own Auth provider (defaults to Github)
 
-👉 User authentication
+👉 Usage quoutas
+
+👉 Embed Chatbots to any site or application
+
+👉 Chatbot themes
 
 ... and more
+
+## Roadmap
+
+- [x] Bring your own db
+- [x] Bring your own Auth provider
+- [x] Chatbots
+- [x] Prompt templates
+- [] API endpoints to chatbot
+- [] External datasources
+- [] chatGPT plugins
+- [] Chatbots themes
+- [] Chatbot embedding
 
 ## Stack
 
