@@ -28,6 +28,10 @@ const chatbotHandler = async (request, response) => {
     }),
     prismaClient.chatbotMessage.findMany({
       where: { chatbotId: parseInt(chatbotId) },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 5,
     }),
   ]);
 
