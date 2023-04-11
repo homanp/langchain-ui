@@ -71,7 +71,7 @@ export default function ChatInput({ isLoading, onSubmit, ...properties }) {
           <Stack
             alignSelf="flex-end"
             alignItems="center"
-            jusityContent="center"
+            justifyContent="center"
             height="20px"
           >
             <BeatLoader color={loaderColor} size={5} />
