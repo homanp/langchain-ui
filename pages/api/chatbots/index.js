@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]";
-
-const prismaClient = new PrismaClient();
+import { prismaClient } from "@/lib/prisma";
 
 const chatbotsHandler = async (request, response) => {
   const session = await getServerSession(request, response, authOptions);

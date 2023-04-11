@@ -9,10 +9,8 @@ import {
 import { MessagesPlaceholder } from "langchain/prompts";
 import { BufferMemory, ChatMessageHistory } from "langchain/memory";
 import { HumanChatMessage, AIChatMessage } from "langchain/schema";
-import { PrismaClient } from "@prisma/client";
 import { DEFAULT_PROMPT_TEMPLATE } from "@/lib/prompt-template";
-
-const prismaClient = new PrismaClient();
+import { prismaClient } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
