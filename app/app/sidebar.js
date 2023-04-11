@@ -36,6 +36,7 @@ export default function Sidebar() {
   const menu = useSidebar();
   const { colorMode } = useColorMode();
   const isLight = colorMode === "light";
+  const backgroundColor = isLight ? "gray.50" : "gray.900";
 
   return (
     <Stack
@@ -44,6 +45,7 @@ export default function Sidebar() {
       borderRightWidth={0.5}
       justifyContent="space-between"
       paddingBottom={4}
+      backgroundColor={backgroundColor}
     >
       <Stack spacing={4}>
         <UserMenu padding={2} />
