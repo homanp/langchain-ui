@@ -18,7 +18,7 @@ import { TbCopy } from "react-icons/tb";
 
 export default function ChatOuput({ messages, isLoading, ...properties }) {
   const loaderColor = useColorModeValue("gray.100", "white");
-  const unevenBackgroundColor = useColorModeValue("gray.100", "#2F3239");
+  const unevenBackgroundColor = useColorModeValue("gray.100", "gray.600");
   const lastMessageReference = useRef();
 
   useEffect(() => {
