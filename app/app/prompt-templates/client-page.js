@@ -88,7 +88,7 @@ export default function PromptTemplatesClientPage() {
   }, []);
 
   return (
-    <Stack flex={1} paddingX={4} paddingY={4} spacing={4}>
+    <Stack flex={1} padding={4} spacing={4}>
       <PageHeader
         icon={menu.find(({ id }) => id === "prompt_templates").icon}
         title="Prompt templates"
