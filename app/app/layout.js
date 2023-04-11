@@ -12,7 +12,7 @@ export default async function AppLayout({ children }) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/user/login");
+    redirect("/");
   }
 
   return <AppContainer>{children}</AppContainer>;
