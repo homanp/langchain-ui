@@ -1,18 +1,22 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import {
+  Box,
   Container,
   HStack,
   Icon,
   IconButton,
+  Stack,
   Textarea,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { TbSend } from "react-icons/tb";
 import autosize from "autosize";
+import { BeatLoader } from "react-spinners";
 
 export default function ChatInput({ isLoading, onSubmit, ...properties }) {
-  const backgroundColor = useColorModeValue("gray.100", "#2F3239");
+  const backgroundColor = useColorModeValue("gray.100", "gray.600");
+  const loaderColor = useColorModeValue("gray.100", "white");
   const iconColor = useColorModeValue("gray.500", "white");
   const [message, setMessage] = useState();
   const textareaReference = useRef();
@@ -64,14 +68,24 @@ export default function ChatInput({ isLoading, onSubmit, ...properties }) {
           outline="none"
           resize="none"
         />
-        <IconButton
-          alignSelf="flex-end"
-          variant="ghost"
-          size="sm"
-          isLoading={isLoading}
-          onClick={() => onSubmit(message)}
-          icon={<Icon as={TbSend} color={iconColor} fontSize="lg" />}
-        />
+        {isLoading ? (
+          <Stack
+            alignSelf="flex-end"
+            alignItems="center"
+            jusityContent="center"
+            height="20px"
+          >
+            <BeatLoader color={loaderColor} size={5} />
+          </Stack>
+        ) : (
+          <IconButton
+            alignSelf="flex-end"
+            variant="ghost"
+            size="sm"
+            onClick={() => onSubmit(message)}
+            icon={<Icon as={TbSend} color={iconColor} fontSize="lg" />}
+          />
+        )}
       </HStack>
     </Container>
   );
