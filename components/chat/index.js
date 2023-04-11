@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
 import { Stack } from "@chakra-ui/react";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 import ChatInput from "./input";
 import ChatOuput from "./output";
 import { createChatbotMessage, sendChatMessage } from "@/lib/api";
@@ -12,27 +13,23 @@ export default function Chat({ id, ...properties }) {
   const onSubmit = useCallback(
     async (values) => {
       setIsSendingMessage(true);
-      setMessages((previousMessages) => [
-        ...previousMessages,
-        { data: { response: values } },
-      ]);
 
-      await createChatbotMessage(id, {
-        message: values,
-        agent: "user",
+      await fetchEventSource(`/api/v1/chatbot/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: values,
+        }),
+        onmessage: (event) => {
+          console.log(event);
+        },
+        onclose() {
+          // if the server closes the connection unexpectedly, retry:
+          console.log("closed");
+        },
       });
-
-      const response = await sendChatMessage({
-        id,
-        message: values,
-      });
-
-      createChatbotMessage(id, {
-        message: response.data.response,
-        agent: "ai",
-      });
-
-      setMessages((previousMessages) => [...previousMessages, response]);
 
       setIsSendingMessage();
     },
