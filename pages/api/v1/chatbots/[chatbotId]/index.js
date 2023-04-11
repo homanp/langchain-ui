@@ -11,8 +11,9 @@ import { HumanChatMessage, AIChatMessage } from "langchain/schema";
 import { PrismaClient } from "@prisma/client";
 import { DEFAULT_PROMPT_TEMPLATE } from "@/lib/prompt-template";
 
+const prismaClient = new PrismaClient();
+
 const chatbotHandler = async (request, response) => {
-  const prismaClient = new PrismaClient();
   const { chatbotId } = request.query;
   const { message } = request.body;
 
