@@ -1,6 +1,6 @@
+import { NextResponse } from "next/server";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { ConversationChain } from "langchain/chains";
-import { CallbackManager } from "langchain/callbacks";
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
@@ -74,49 +74,8 @@ export async function POST(request, { params }) {
     llm,
   });
 
-  try {
-    const llm = new ChatOpenAI({
-      temperature: 0,
-      streaming: true,
-      callbackManager: CallbackManager.fromHandlers({
-        async handleLLMNewToken(token) {
-          await writer.write(encoder.encode(token));
-        },
-        async handleLLMEnd() {
-          console.log("close");
-          writer.close();
-        },
-      }),
-    });
-
-    const prompt = ChatPromptTemplate.fromPromptMessages([
-      SystemMessagePromptTemplate.fromTemplate(
-        promptTemplate?.prompt || DEFAULT_PROMPT_TEMPLATE
-      ),
-      new MessagesPlaceholder("history"),
-      HumanMessagePromptTemplate.fromTemplate("{message}"),
-    ]);
-
-    const chain = new ConversationChain({
-      memory,
-      prompt,
-      llm,
-    });
-
-    await chain.call({
-      message,
-    });
-  } catch (error) {
-    console.error("An error occurred during OpenAI request", error);
-    writer.write(encoder.encode("An error occurred during OpenAI request"));
-    writer.close();
-  }
-
-  return new Response(responseStream.readable, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      Connection: "keep-alive",
-      "Cache-Control": "no-cache, no-transform",
-    },
+  return NextResponse.json({
+    success: true,
+    data: await chain.call({ message }),
   });
 }
