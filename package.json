@@ -1,6 +1,9 @@
 {
   "name": "langchain-ui",
-  "version": "0.1.0",
+  "version": "0.0.1",
+  "engines": {
+		"node": ">=18"
+	},
   "private": true,
   "scripts": {
     "dev": "next dev",
