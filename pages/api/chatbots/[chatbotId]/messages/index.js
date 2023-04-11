@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prismaClient = new PrismaClient();
+import { prismaClient } from "@/lib/prisma";
 
 export const chatbotMessagesHandler = async (request, response) => {
   const { chatbotId } = request.query;
