@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
 import { Stack } from "@chakra-ui/react";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 import ChatInput from "./input";
 import ChatOuput from "./output";
 import { createChatbotMessage, sendChatMessage } from "@/lib/api";
@@ -44,18 +45,22 @@ export default function Chat({ id, ...properties }) {
       {...properties}
       minHeight="100vh"
       maxHeight="100vh"
-      justifyContent="space-between"
       spacing={6}
+      position="relative"
     >
       <ChatOuput
         isLoading={isSendingMessage}
         messages={messages}
         overflowY="auto"
+        paddingBottom={40}
       />
       <ChatInput
+        position="absolute"
+        bottom="0"
+        width="100%"
         isLoading={isSendingMessage}
         onSubmit={onSubmit}
-        paddingBottom={6}
+        paddingY={6}
       />
     </Stack>
   );

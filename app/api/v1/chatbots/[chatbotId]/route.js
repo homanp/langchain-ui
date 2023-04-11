@@ -1,4 +1,5 @@
-import { ChatOpenAI } from "langchain/chat_models";
+import { NextResponse } from "next/server";
+import { ChatOpenAI } from "langchain/chat_models/openai";
 import { ConversationChain } from "langchain/chains";
 import {
   ChatPromptTemplate,
@@ -13,15 +14,17 @@ import { DEFAULT_PROMPT_TEMPLATE } from "@/lib/prompt-template";
 
 const prismaClient = new PrismaClient();
 
-const chatbotHandler = async (request, response) => {
-  const { chatbotId } = request.query;
-  const { message } = request.body;
+export const runtime = "nodejs";
 
-  if (!message) {
-    return response
-      .status(400)
-      .json({ success: false, error: "Required field {message} is missing" });
-  }
+export const dynamic = "force-dynamic";
+
+export async function POST(request, { params }) {
+  const { chatbotId } = params;
+  const { message } = await request.json();
+
+  let responseStream = new TransformStream();
+  const writer = responseStream.writable.getWriter();
+  const encoder = new TextEncoder();
 
   const [{ promptTemplateId }, messages] = await Promise.all([
     prismaClient.chatbot.findUnique({
@@ -54,6 +57,7 @@ const chatbotHandler = async (request, response) => {
 
   const llm = new ChatOpenAI({
     temperature: 0,
+    streaming: true,
   });
 
   const prompt = ChatPromptTemplate.fromPromptMessages([
@@ -70,13 +74,8 @@ const chatbotHandler = async (request, response) => {
     llm,
   });
 
-  return response.status(200).json({
+  return NextResponse.json({
     success: true,
-    data: await chain.call({
-      message,
-    }),
-    agent: "ai",
+    data: await chain.call({ message }),
   });
-};
-
-export default chatbotHandler;
+}
