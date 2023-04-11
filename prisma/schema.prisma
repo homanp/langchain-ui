@@ -20,6 +20,7 @@ model User {
   sessions       Session[]
   PromptTemplate PromptTemplate[]
   Chatbot        Chatbot[]
+  AccessToken    AccessToken[]
 }
 
 model Account {
@@ -89,4 +90,12 @@ model ChatbotMessage {
   chatbotId Int?
   message   String   @db.VarChar()
   agent     String
+}
+
+model AccessToken {
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  token  String
+  name   String
 }
