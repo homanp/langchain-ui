@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { ConversationChain } from "langchain/chains";
+import { CallbackManager } from "langchain/callbacks";
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
@@ -19,11 +20,9 @@ export const dynamic = "force-dynamic";
 export async function POST(request, { params }) {
   const { chatbotId } = params;
   const { message } = await request.json();
-
-  let responseStream = new TransformStream();
-  const writer = responseStream.writable.getWriter();
   const encoder = new TextEncoder();
-
+  const stream = new TransformStream();
+  const writer = stream.writable.getWriter();
   const [{ promptTemplateId }, messages] = await Promise.all([
     prismaClient.chatbot.findUnique({
       where: { id: parseInt(chatbotId) },
@@ -56,6 +55,20 @@ export async function POST(request, { params }) {
   const llm = new ChatOpenAI({
     temperature: 0,
     streaming: true,
+    callbackManager: CallbackManager.fromHandlers({
+      handleLLMNewToken: async (token) => {
+        await writer.ready;
+        await writer.write(encoder.encode(`data: ${token}\n\n`));
+      },
+      handleLLMEnd: async () => {
+        await writer.ready;
+        await writer.close();
+      },
+      handleLLMError: async (e) => {
+        await writer.ready;
+        await writer.abort(e);
+      },
+    }),
   });
 
   const prompt = ChatPromptTemplate.fromPromptMessages([
@@ -72,8 +85,12 @@ export async function POST(request, { params }) {
     llm,
   });
 
-  return NextResponse.json({
-    success: true,
-    data: await chain.call({ message }),
+  chain.call({ message });
+
+  return new NextResponse(stream.readable, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+    },
   });
 }
