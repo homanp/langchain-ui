@@ -15,7 +15,7 @@ import autosize from "autosize";
 import { BeatLoader } from "react-spinners";
 
 export default function ChatInput({ isLoading, onSubmit, ...properties }) {
-  const backgroundColor = useColorModeValue("gray.100", "gray.600");
+  const backgroundColor = useColorModeValue("gray.100", "gray.700");
   const backgroundGradient = useColorModeValue(
     "linear(to-t, white, transparent)",
     "linear(to-t, gray.800, transparent)"
