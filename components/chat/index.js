@@ -2,39 +2,59 @@ import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
 import { Stack } from "@chakra-ui/react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
+import { createChatbotMessage } from "@/lib/api";
 import ChatInput from "./input";
 import ChatOuput from "./output";
-import { createChatbotMessage, sendChatMessage } from "@/lib/api";
 
 export default function Chat({ id, ...properties }) {
   const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState();
   const [isSendingMessage, setIsSendingMessage] = useState();
 
   const onSubmit = useCallback(
     async (values) => {
+      let message = "";
+
       setIsSendingMessage(true);
       setMessages((previousMessages) => [
         ...previousMessages,
         { data: { response: values } },
       ]);
 
-      await createChatbotMessage(id, {
+      createChatbotMessage(id, {
         message: values,
         agent: "user",
       });
 
-      const response = await sendChatMessage({
-        id,
-        message: values,
+      await fetchEventSource(`/api/v1/chatbots/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: values,
+        }),
+        async onmessage(event) {
+          if (event.data !== "" && event.data !== "CLOSE") {
+            message += event.data;
+            setNewMessage(message);
+          }
+
+          if (event.data === "CLOSE") {
+            setMessages((previousMessages) => [
+              ...previousMessages,
+              { agent: "ai", data: { response: message } },
+            ]);
+
+            createChatbotMessage(id, {
+              message,
+              agent: "ai",
+            });
+
+            setNewMessage();
+          }
+        },
       });
-
-      createChatbotMessage(id, {
-        message: response.data.response,
-        agent: "ai",
-      });
-
-      setMessages((previousMessages) => [...previousMessages, response]);
-
       setIsSendingMessage();
     },
     [id]
@@ -51,6 +71,7 @@ export default function Chat({ id, ...properties }) {
       <ChatOuput
         isLoading={isSendingMessage}
         messages={messages}
+        newMessage={newMessage}
         overflowY="auto"
         paddingBottom={40}
       />
@@ -65,7 +86,3 @@ export default function Chat({ id, ...properties }) {
     </Stack>
   );
 }
-
-Chat.propTypes = {
-  id: PropTypes.string,
-};

@@ -11,12 +11,18 @@ import {
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PropTypes from "prop-types";
-import { BeatLoader } from "react-spinners";
+
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { TbCopy } from "react-icons/tb";
+import { BeatLoader } from "react-spinners";
 
-export default function ChatOuput({ messages, isLoading, ...properties }) {
+export default function ChatOuput({
+  messages,
+  newMessage,
+  isLoading,
+  ...properties
+}) {
   const loaderColor = useColorModeValue("gray.100", "white");
   const unevenBackgroundColor = useColorModeValue("gray.100", "gray.600");
   const lastMessageReference = useRef();
@@ -83,10 +89,49 @@ export default function ChatOuput({ messages, isLoading, ...properties }) {
         ))}
         {isLoading && (
           <Box padding={4} backgroundColor={unevenBackgroundColor}>
-            <HStack maxWidth="4xl" marginX="auto" spacing={6}>
-              <Avatar size="xs" src="/chatbot.png" />
-              <Stack borderRadius="full" borderWidth="1px" padding={1}>
-                <BeatLoader color={loaderColor} size={8} />
+            <HStack
+              spacing={6}
+              maxWidth="4xl"
+              marginX="auto"
+              alignItems="flex-start"
+            >
+              <Avatar src="/chatbot.png" size="xs" />
+              <Stack spacing={4} fontSize="sm">
+                {newMessage ? (
+                  <ReactMarkdown
+                    components={{
+                      pre: (pre) => {
+                        const codeChunk =
+                          pre.node.children[0].children[0].value;
+
+                        const handleCopyCode = () => {
+                          navigator.clipboard.writeText(codeChunk);
+                        };
+
+                        return (
+                          <Box position="relative">
+                            <IconButton
+                              position="absolute"
+                              top={4}
+                              right={2}
+                              size="sm"
+                              icon={<Icon as={TbCopy} fontSize="lg" />}
+                              onClick={() => handleCopyCode()}
+                            />
+                            <SyntaxHighlighter style={dracula}>
+                              {pre.children[0].props.children[0]}
+                            </SyntaxHighlighter>
+                          </Box>
+                        );
+                      },
+                    }}
+                    remarkPlugins={[remarkGfm]}
+                  >
+                    {newMessage}
+                  </ReactMarkdown>
+                ) : (
+                  <BeatLoader color={loaderColor} size={8} />
+                )}
               </Stack>
             </HStack>
           </Box>
@@ -98,5 +143,6 @@ export default function ChatOuput({ messages, isLoading, ...properties }) {
 
 ChatOuput.propTypes = {
   messages: PropTypes.array,
+  newMessage: PropTypes.string,
   isLoading: PropTypes.bool,
 };
