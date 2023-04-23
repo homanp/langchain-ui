@@ -6,16 +6,16 @@ import {
   Icon,
   IconButton,
   Stack,
+  Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import PropTypes from "prop-types";
-
-import SyntaxHighlighter from "react-syntax-highlighter";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { TbCopy } from "react-icons/tb";
 import { BeatLoader } from "react-spinners";
+import { MemoizedReactMarkdown } from "@/lib/markdown";
 
 export default function ChatOuput({
   messages,
@@ -53,36 +53,54 @@ export default function ChatOuput({
             >
               <Avatar src={agent ? "/chatbot.png" : "/user.png"} size="xs" />
               <Stack spacing={4} fontSize="sm">
-                <ReactMarkdown
+                <MemoizedReactMarkdown
                   components={{
-                    pre: (pre) => {
-                      const codeChunk = pre.node.children[0].children[0].value;
+                    code({ node, inline, className, children, ...props }) {
+                      const value = String(children).replace(/\n$/, "");
+                      const match = /language-(\w+)/.exec(className || "");
 
                       const handleCopyCode = () => {
-                        navigator.clipboard.writeText(codeChunk);
+                        navigator.clipboard.writeText(value);
                       };
 
-                      return (
+                      return !inline ? (
                         <Box position="relative">
-                          <IconButton
-                            position="absolute"
-                            top={4}
-                            right={2}
-                            size="sm"
-                            icon={<Icon as={TbCopy} fontSize="lg" />}
-                            onClick={() => handleCopyCode()}
-                          />
-                          <SyntaxHighlighter style={dracula}>
-                            {pre.children[0].props.children[0]}
+                          <HStack position="absolute" top={2} right={2}>
+                            <Text fontSize="sm">{match && match[1]}</Text>
+                            <IconButton
+                              size="sm"
+                              icon={<Icon as={TbCopy} fontSize="lg" />}
+                              onClick={() => handleCopyCode()}
+                            />
+                          </HStack>
+
+                          <SyntaxHighlighter
+                            customStyle={{
+                              fontSize: "12px",
+                            }}
+                            codeTagProps={{
+                              style: {
+                                lineHeight: "inherit",
+                                fontSize: "inherit",
+                              },
+                            }}
+                            style={dracula}
+                            language={(match && match[1]) || ""}
+                          >
+                            {value}
                           </SyntaxHighlighter>
                         </Box>
+                      ) : (
+                        <code className={className} {...props}>
+                          {children}
+                        </code>
                       );
                     },
                   }}
                   remarkPlugins={[remarkGfm]}
                 >
-                  {response}
-                </ReactMarkdown>
+                  {newMessage}
+                </MemoizedReactMarkdown>
               </Stack>
             </HStack>
           </Box>
@@ -98,37 +116,54 @@ export default function ChatOuput({
               <Avatar src="/chatbot.png" size="xs" />
               <Stack spacing={4} fontSize="sm">
                 {newMessage ? (
-                  <ReactMarkdown
+                  <MemoizedReactMarkdown
                     components={{
-                      pre: (pre) => {
-                        const codeChunk =
-                          pre.node.children[0].children[0].value;
+                      code({ node, inline, className, children, ...props }) {
+                        const value = String(children).replace(/\n$/, "");
+                        const match = /language-(\w+)/.exec(className || "");
 
                         const handleCopyCode = () => {
-                          navigator.clipboard.writeText(codeChunk);
+                          navigator.clipboard.writeText(value);
                         };
 
-                        return (
+                        return !inline ? (
                           <Box position="relative">
-                            <IconButton
-                              position="absolute"
-                              top={4}
-                              right={2}
-                              size="sm"
-                              icon={<Icon as={TbCopy} fontSize="lg" />}
-                              onClick={() => handleCopyCode()}
-                            />
-                            <SyntaxHighlighter style={dracula}>
-                              {pre.children[0].props.children[0]}
+                            <HStack position="absolute" top={2} right={2}>
+                              <Text fontSize="sm">{match && match[1]}</Text>
+                              <IconButton
+                                size="sm"
+                                icon={<Icon as={TbCopy} fontSize="lg" />}
+                                onClick={() => handleCopyCode()}
+                              />
+                            </HStack>
+
+                            <SyntaxHighlighter
+                              customStyle={{
+                                fontSize: "12px",
+                              }}
+                              codeTagProps={{
+                                style: {
+                                  lineHeight: "inherit",
+                                  fontSize: "inherit",
+                                },
+                              }}
+                              style={dracula}
+                              language={(match && match[1]) || ""}
+                            >
+                              {value}
                             </SyntaxHighlighter>
                           </Box>
+                        ) : (
+                          <code className={className} {...props}>
+                            {children}
+                          </code>
                         );
                       },
                     }}
                     remarkPlugins={[remarkGfm]}
                   >
                     {newMessage}
-                  </ReactMarkdown>
+                  </MemoizedReactMarkdown>
                 ) : (
                   <BeatLoader color={loaderColor} size={8} />
                 )}

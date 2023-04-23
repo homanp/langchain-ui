@@ -32,6 +32,7 @@ export async function POST(request, { params }) {
     : undefined;
 
   const handleNewToken = async (token) => {
+    const match = /\r|\n/.exec(token);
     await writer.ready;
     await writer.write(encoder.encode(`data: ${token}\n\n`));
   };
