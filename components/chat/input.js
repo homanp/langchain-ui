@@ -49,6 +49,14 @@ export default function ChatInput({ isLoading, onSubmit, ...properties }) {
     };
   }, []);
 
+  useEffect(() => {
+    const ref = textareaReference?.current;
+
+    if (!isLoading) {
+      ref.focus();
+    }
+  }, [isLoading]);
+
   return (
     <Box {...properties} bgGradient={backgroundGradient}>
       <Container alignSelf="center" maxWidth="4xl">
@@ -63,7 +71,8 @@ export default function ChatInput({ isLoading, onSubmit, ...properties }) {
         >
           <Textarea
             ref={textareaReference}
-            autoFocus={true}
+            isDisabled={isLoading}
+            autoFocus={!isLoading && true}
             variant="unstyled"
             value={message}
             fontWeight={500}

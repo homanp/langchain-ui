@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Stack } from "@chakra-ui/react";
+import { Box, Stack } from "@chakra-ui/react";
 import PropTypes from "prop-types";
 import Message from "./message";
 
@@ -17,6 +17,8 @@ export default function ChatOuput({
     }
   }, [messages]);
 
+  const showAIMessage = isLoading || newMessage;
+
   return (
     <Stack flex={1} maxWidth="100%" {...properties}>
       <Stack spacing={0}>
@@ -28,8 +30,10 @@ export default function ChatOuput({
             isLastMessage={index + 1 === messages.length}
           />
         ))}
-        {newMessage && (
-          <Message agent="ai" message={newMessage} isLastMessage={true} />
+        {showAIMessage && (
+          <Box ref={lastMessageReference}>
+            <Message agent="ai" message={newMessage} isLastMessage={true} />
+          </Box>
         )}
       </Stack>
     </Stack>
