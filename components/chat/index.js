@@ -10,6 +10,7 @@ export default function Chat({ id, ...properties }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState();
   const [isSendingMessage, setIsSendingMessage] = useState();
+  const decoder = new TextDecoder();
 
   const onSubmit = useCallback(
     async (values) => {
@@ -35,8 +36,8 @@ export default function Chat({ id, ...properties }) {
           message: values,
         }),
         async onmessage(event) {
-          if (event.data !== "" && event.data !== "CLOSE") {
-            message += event.data;
+          if (event.data !== "CLOSE") {
+            message += event.data === "" ? `${event.data} \n` : event.data;
             setNewMessage(message);
           }
 
