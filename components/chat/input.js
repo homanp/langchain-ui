@@ -55,14 +55,18 @@ export default function ChatInput({ isLoading, onSubmit, ...properties }) {
         <HStack
           backgroundColor={backgroundColor}
           borderWidth="1px"
-          padding={4}
+          paddingY={2}
+          paddingLeft={4}
+          paddingRight={2}
           borderRadius="md"
           alignItems="center"
         >
           <Textarea
             ref={textareaReference}
+            autoFocus={true}
             variant="unstyled"
             value={message}
+            fontWeight={500}
             placeholder="Send a message"
             onKeyDown={handleKeyDown}
             backgroundColor="transparent"
