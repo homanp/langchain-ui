@@ -33,6 +33,7 @@
     "eslint-config-next": "13.2.4",
     "framer-motion": "^10.8.5",
     "install": "^0.13.0",
+    "jsonwebtoken": "^9.0.0",
     "ky": "^0.33.3",
     "langchain": "^0.0.52",
     "next": "^13.3.0",
