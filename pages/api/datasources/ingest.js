@@ -34,8 +34,6 @@ const datasourceIngestHandler = async (request, response) => {
     id
   );
 
-  console.log(metal);
-
   await Promise.all(texts.map((text) => metal.index({ text })));
 
   response.status(200).json({ success: true, data: { indexId: id } });
