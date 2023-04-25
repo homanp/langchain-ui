@@ -42,20 +42,16 @@ export default function ChatbotClientPage({ chatbotId }) {
               <Text paddingY={4} paddingX={6} fontSize="sm" fontWeight={500}>
                 {chatbot.name}
               </Text>
-              <Stack paddingY={4} paddingX={6}>
-                <Stack>
+              <Stack paddingY={4} paddingX={6} spacing={4}>
+                <Stack spacing={1}>
                   <Text fontSize="sm" fontWeight={500} color="gray.500">
                     Datasources
                   </Text>
-                  <Text fontSize="sm">Coming soon...</Text>
-                </Stack>
-                <Stack>
-                  <Text fontSize="sm" fontWeight={500} color="gray.500">
-                    Plugins
+                  <Text fontSize="sm">
+                    {chatbot.datasource?.name || "Coming soon..."}
                   </Text>
-                  <Text fontSize="sm">Coming soon...</Text>
                 </Stack>
-                <Stack>
+                <Stack spacing={1}>
                   <Text fontSize="sm" fontWeight={500} color="gray.500">
                     API
                   </Text>

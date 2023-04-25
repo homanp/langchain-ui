@@ -30,6 +30,9 @@ const chatbotHandler = async (request, response) => {
       where: {
         id: parseInt(chatbotId),
       },
+      include: {
+        datasource: true,
+      },
     });
 
     return response.status(200).json({

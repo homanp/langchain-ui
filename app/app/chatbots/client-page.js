@@ -30,6 +30,7 @@ import { useSidebar } from "@/lib/sidebar";
 import {
   createChatbot,
   getChatbots,
+  getDatasources,
   getPrompTemplates,
   removeChatbotById,
 } from "@/lib/api";
@@ -38,6 +39,7 @@ export default function ChatbotsClientPage() {
   const [showForm, setShowForm] = useState();
   const [chatbots, setChatbots] = useState([]);
   const [promptTemplates, setPromptTemplates] = useState([]);
+  const [datasources, setDatasources] = useState([]);
   const buttonColorScheme = useColorModeValue("blackAlpha", "whiteAlpha");
   const buttonBackgroundColor = useColorModeValue("black", "white");
   const borderBottomColor = useColorModeValue("gray.50", "#333");
@@ -51,13 +53,19 @@ export default function ChatbotsClientPage() {
   } = useForm();
 
   const { loading: isLoading } = useAsync(async () => {
-    const [{ data: chatbots }, { data: promptTemplates }] = await Promise.all([
+    const [
+      { data: chatbots },
+      { data: promptTemplates },
+      { data: datasources },
+    ] = await Promise.all([
       getChatbots(),
       getPrompTemplates(),
+      getDatasources(),
     ]);
 
     setChatbots(chatbots);
     setPromptTemplates(promptTemplates);
+    setDatasources(datasources);
 
     return;
   }, [getChatbots, getPrompTemplates, setChatbots]);
@@ -70,10 +78,11 @@ export default function ChatbotsClientPage() {
 
   const onSubmit = useCallback(
     async (values) => {
-      const { name, promptTemplateId } = values;
+      const { name, promptTemplateId, datasourceId } = values;
       const { data: chatbot } = await createChatbot({
         name,
         promptTemplateId: parseInt(promptTemplateId),
+        datasourceId: parseInt(datasourceId),
       });
 
       router.push(`/app/chatbots/${chatbot.id}`);
@@ -162,6 +171,19 @@ export default function ChatbotsClientPage() {
                     placeholder="Select prompt template"
                   >
                     {promptTemplates.map(({ id, name }) => (
+                      <option key={id} value={id}>
+                        {name}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <Select
+                    size="sm"
+                    {...register("datasourceId")}
+                    placeholder="Select a datasource"
+                  >
+                    {datasources.map(({ id, name }) => (
                       <option key={id} value={id}>
                         {name}
                       </option>
