@@ -20,6 +20,7 @@ model User {
   sessions       Session[]
   PromptTemplate PromptTemplate[]
   Chatbot        Chatbot[]
+  Datasource     Datasource[]
 }
 
 model Account {
@@ -67,6 +68,16 @@ model PromptTemplate {
   inputs    Json
   name      String
   Chatbot   Chatbot[]
+}
+
+model Datasource {
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  metalIndexId String
+  name         String
 }
 
 model Chatbot {
