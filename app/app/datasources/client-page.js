@@ -21,6 +21,7 @@ import {
   Td,
   useColorModeValue,
   Select,
+  Tag,
 } from "@chakra-ui/react";
 import { TbPlus, TbTrashX } from "react-icons/tb";
 import { useAsync } from "react-use";
@@ -68,18 +69,29 @@ export default function DatasourcesClientPage() {
 
   const onSubmit = useCallback(
     async ({ name, type }) => {
-      const payload = {
-        name,
-      };
-      const uploadUrl = await getUploadUrl({ type: files[0].type });
+      const fileType = files[0].type;
+      const uploadUrl = await getUploadUrl({ type: fileType });
+      const s3Url = `${uploadUrl.url}/${uploadUrl.fields.key}`;
 
       await uploadFile(files[0], uploadUrl);
-      await ingestData({ url: uploadUrl, type: files[0].type });
+
+      const {
+        data: { indexId },
+      } = await ingestData({ url: s3Url, type: fileType });
+      const { data: datasource } = await createDatasource({
+        metalIndexId: indexId,
+        name: name,
+        type: type,
+      });
+
+      setDatasources((prev) => [datasource, ...prev]);
+      setShowForm();
+      reset();
     },
-    [files, getUploadUrl, reset, setDatasources, uploadFile]
+    [files, reset, setDatasources]
   );
 
-  const handleRemovePromptTemplate = useCallback(async (datasourceId) => {
+  const handleRemoveDatasource = useCallback(async (datasourceId) => {
     await removeDatasourceById(datasourceId);
 
     setDatasources((prev) => prev.filter(({ id }) => id !== datasourceId));
@@ -112,21 +124,24 @@ export default function DatasourcesClientPage() {
         <TableContainer>
           <Table size="sm">
             <Tbody>
-              {datasources.map(({ id, name }) => (
+              {datasources.map(({ id, name, type }) => (
                 <Tr key={id}>
                   <Td
                     cursor="pointer"
                     _hover={{ opacity: 0.5 }}
                     borderBottomColor={borderBottomColor}
                   >
-                    {name}
+                    <HStack>
+                      <Text fontSize="sm">{name}</Text>{" "}
+                      <Tag size="sm">{type}</Tag>
+                    </HStack>
                   </Td>
                   <Td textAlign="right" borderBottomColor={borderBottomColor}>
                     <IconButton
                       size="sm"
                       icon={<Icon as={TbTrashX} fontSize="lg" />}
                       variant="ghost"
-                      onClick={() => handleRemovePromptTemplate(id)}
+                      onClick={() => handleRemoveDatasource(id)}
                     />
                   </Td>
                 </Tr>

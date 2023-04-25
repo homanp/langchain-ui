@@ -78,6 +78,7 @@ model Datasource {
   userId       String
   metalIndexId String
   name         String
+  type         String
 }
 
 model Chatbot {
