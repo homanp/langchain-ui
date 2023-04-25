@@ -33,6 +33,8 @@ import {
   removeDatasourceById,
 } from "@/lib/api";
 import { DATASOURCE_TYPES } from "@/lib/datasources";
+import { uploadFile } from "@/lib/upload-file.js";
+import { getUploadUrl } from "@/lib/upload-url.js";
 
 export default function DatasourcesClientPage() {
   const buttonColorScheme = useColorModeValue("blackAlpha", "whiteAlpha");
@@ -64,13 +66,15 @@ export default function DatasourcesClientPage() {
   const validate = useCallback((value) => value.length > 0, []);
 
   const onSubmit = useCallback(
-    async ({ name }) => {
+    async ({ name, type }) => {
       const payload = {
         name,
       };
-      const filePath = URL.createObjectURL(files[0]);
+      const uploadUrl = await getUploadUrl({ type: files[0].type });
+
+      await uploadFile(files[0], uploadUrl);
     },
-    [files, reset, setDatasources]
+    [files, getUploadUrl, reset, setDatasources, uploadFile]
   );
 
   const handleRemovePromptTemplate = useCallback(async (datasourceId) => {
