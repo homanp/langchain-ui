@@ -32,6 +32,7 @@ const chatbotHandler = async (request, response) => {
       },
       include: {
         datasource: true,
+        promptTemplate: true,
       },
     });
 

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { prismaClient } from "@/lib/prisma";
+import { ChatMessageHistory } from "langchain/memory";
+import { HumanChatMessage, AIChatMessage } from "langchain/schema";
 import { useChain } from "@/lib/chain";
 
 export const runtime = "nodejs";
@@ -12,9 +14,13 @@ export async function POST(request, { params }) {
   const encoder = new TextEncoder();
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
-  const [{ promptTemplateId }, messages] = await Promise.all([
+  const [{ promptTemplate, datasource }, messages] = await Promise.all([
     prismaClient.chatbot.findUnique({
       where: { id: parseInt(chatbotId) },
+      include: {
+        datasource: true,
+        promptTemplate: true,
+      },
     }),
     prismaClient.chatbotMessage.findMany({
       where: { chatbotId: parseInt(chatbotId) },
@@ -25,11 +31,9 @@ export async function POST(request, { params }) {
     }),
   ]);
 
-  const promptTemplate = promptTemplateId
-    ? await prismaClient.promptTemplate.findUnique({
-        where: { id: promptTemplateId },
-      })
-    : undefined;
+  const history = messages.map(({ agent, message }) =>
+    agent === "ai" ? new AIChatMessage(message) : new HumanChatMessage(message)
+  );
 
   const handleNewToken = async (token) => {
     const match = /\r|\n/.exec(token);
@@ -51,12 +55,17 @@ export async function POST(request, { params }) {
   const chain = useChain({
     messages,
     promptTemplate,
+    datasource,
     onLLMNewToken: handleNewToken,
     onLLMEnd: handleTokenEnd,
     onLLMError: handleTokenError,
   });
 
-  chain.call({ message });
+  chain.call(
+    datasource
+      ? { question: message, chat_history: new ChatMessageHistory(history) }
+      : { message }
+  );
 
   return new NextResponse(stream.readable, {
     headers: {
