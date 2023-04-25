@@ -28,6 +28,7 @@ import { useForm } from "react-hook-form";
 import PageHeader from "@/components/page-header";
 import { useSidebar } from "@/lib/sidebar";
 import {
+  ingestData,
   createDatasource,
   getDatasources,
   removeDatasourceById,
@@ -73,6 +74,7 @@ export default function DatasourcesClientPage() {
       const uploadUrl = await getUploadUrl({ type: files[0].type });
 
       await uploadFile(files[0], uploadUrl);
+      await ingestData({ url: uploadUrl, type: files[0].type });
     },
     [files, getUploadUrl, reset, setDatasources, uploadFile]
   );
