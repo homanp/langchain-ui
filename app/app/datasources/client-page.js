@@ -6,7 +6,7 @@ import {
   Center,
   Container,
   FormControl,
-  FormHelperText,
+  FormErrorMessage,
   HStack,
   Icon,
   IconButton,
@@ -15,13 +15,12 @@ import {
   Stack,
   Table,
   TableContainer,
-  Tag,
   Tbody,
-  Textarea,
   Text,
   Tr,
   Td,
   useColorModeValue,
+  Select,
 } from "@chakra-ui/react";
 import { TbPlus, TbTrashX } from "react-icons/tb";
 import { useAsync } from "react-use";
@@ -29,11 +28,11 @@ import { useForm } from "react-hook-form";
 import PageHeader from "@/components/page-header";
 import { useSidebar } from "@/lib/sidebar";
 import {
-  createPromptTemplate,
-  getPrompTemplates,
-  getPromptVariables,
-  removePromptTemplateById,
+  createDatasource,
+  getDatasources,
+  removeDatasourceById,
 } from "@/lib/api";
+import { DATASOURCE_TYPES } from "@/lib/datasources";
 
 export default function DatasourcesClientPage() {
   const buttonColorScheme = useColorModeValue("blackAlpha", "whiteAlpha");
@@ -43,11 +42,11 @@ export default function DatasourcesClientPage() {
   const [datasources, setDatasources] = useState([]);
 
   const { loading: isLoading } = useAsync(async () => {
-    const { data } = await getPrompTemplates();
+    const { data } = await getDatasources();
     setDatasources(data);
 
     return data;
-  }, [getPrompTemplates, setDatasources]);
+  }, [getDatasources, setDatasources]);
   const [showForm, setShowForm] = useState(
     !isLoading && datasources.length === 0
   );
@@ -58,31 +57,26 @@ export default function DatasourcesClientPage() {
     register,
     reset,
     watch,
-  } = useForm();
+  } = useForm({ values: { type: "csv" } });
 
-  const prompt = watch("prompt");
+  const files = watch("file");
+  const type = watch("type");
+  const validate = useCallback((value) => value.length > 0, []);
 
   const onSubmit = useCallback(
-    async ({ name, prompt }) => {
+    async ({ name }) => {
       const payload = {
         name,
-        prompt,
-        inputs: getPromptVariables(prompt),
       };
-
-      const { data: promptTemplate } = await createPromptTemplate(payload);
-
-      setDatasources((prev) => [promptTemplate, ...prev]);
-      setShowForm();
-      reset();
+      const filePath = URL.createObjectURL(files[0]);
     },
-    [reset, setDatasources]
+    [files, reset, setDatasources]
   );
 
-  const handleRemovePromptTemplate = useCallback(async (promptTemplateId) => {
-    await removePromptTemplateById(promptTemplateId);
+  const handleRemovePromptTemplate = useCallback(async (datasourceId) => {
+    await removeDatasourceById(datasourceId);
 
-    setDatasources((prev) => prev.filter(({ id }) => id !== promptTemplateId));
+    setDatasources((prev) => prev.filter(({ id }) => id !== datasourceId));
   }, []);
 
   return (
@@ -142,7 +136,7 @@ export default function DatasourcesClientPage() {
               <Stack spacing={1}>
                 <Icon
                   fontSize="2xl"
-                  as={menu.find(({ id }) => id === "prompt_templates").icon}
+                  as={menu.find(({ id }) => id === "datasources").icon}
                 />
                 <Text>Datasources</Text>
                 <Text fontSize="sm" color="gray.500">
@@ -153,57 +147,54 @@ export default function DatasourcesClientPage() {
                 <FormControl isInvalid={errors?.name}>
                   <Input
                     size="sm"
-                    placeholder="My custom prompt..."
+                    placeholder="My datasource..."
                     {...register("name", { required: true })}
                   />
+                  {errors?.file && (
+                    <FormErrorMessage>Please choose a name</FormErrorMessage>
+                  )}
                 </FormControl>
-                <FormControl isInvalid={errors?.prompt}>
+                <FormControl isInvalid={errors?.type}>
+                  <Select size="sm" {...register("type", { required: true })}>
+                    {DATASOURCE_TYPES.map(({ id, name }) => (
+                      <option key={id} value={id}>
+                        {name}
+                      </option>
+                    ))}
+                  </Select>
+                  {errors?.file && (
+                    <FormErrorMessage>
+                      Please select a datasource
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+                <FormControl isInvalid={errors?.file}>
                   <Box
-                    borderRadius="md"
-                    borderWidth="1px"
-                    padding={3}
-                    spacing={0}
-                  >
-                    <Textarea
-                      minHeight="250px"
-                      variant="unstyled"
-                      fontSize="sm"
-                      {...register("prompt", { required: true })}
-                    />
-                    <HStack justifyContent="flex-end">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setShowForm()}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        colorScheme={buttonColorScheme}
-                        backgroundColor={buttonBackgroundColor}
-                        type="sumbit"
-                        size="sm"
-                        isLoading={isSubmitting}
-                      >
-                        Save
-                      </Button>
-                    </HStack>
-                  </Box>
-                  <FormHelperText>
-                    Type <Tag size="sm">{`{{myVariable}}`}</Tag> to insert
-                    variables into your template.
-                  </FormHelperText>
+                    as={
+                      DATASOURCE_TYPES.find(({ id }) => id === type).component
+                    }
+                    files={files}
+                    register={register}
+                    validate={validate}
+                  />
+                  {errors?.file && (
+                    <FormErrorMessage>Please select a file</FormErrorMessage>
+                  )}
                 </FormControl>
               </Stack>
-              <HStack>
-                <Text fontSize="sm">Inputs:</Text>
-                <HStack>
-                  {getPromptVariables(prompt).map((variable) => (
-                    <Tag key={variable} size="sm">
-                      {variable}
-                    </Tag>
-                  ))}
-                </HStack>
+              <HStack justifyContent="flex-end">
+                <Button variant="ghost" size="sm" onClick={() => setShowForm()}>
+                  Cancel
+                </Button>
+                <Button
+                  colorScheme={buttonColorScheme}
+                  backgroundColor={buttonBackgroundColor}
+                  type="sumbit"
+                  size="sm"
+                  isLoading={isSubmitting}
+                >
+                  Save
+                </Button>
               </HStack>
             </Stack>
           </Container>
