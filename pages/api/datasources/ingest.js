@@ -1,6 +1,7 @@
 import ky from "ky";
 import { CSVLoader } from "langchain/document_loaders/fs/csv";
 import Metal from "@getmetal/metal-sdk";
+import { v4 as uuidv4 } from "uuid";
 
 const datasourceIngestHandler = async (request, response) => {
   const { url, type } = request.body;
@@ -8,35 +9,17 @@ const datasourceIngestHandler = async (request, response) => {
   const loader = new CSVLoader(blob);
   const docs = await loader.load();
   const texts = docs.map((doc) => doc.pageContent);
-
-  const {
-    data: { id },
-  } = await ky
-    .post(
-      `https://api.getmetal.io/v1/apps/${process.env.METAL_APP_ID}/indexes`,
-      {
-        headers: {
-          "x-metal-api-key": process.env.METAL_API_KEY,
-          "x-metal-client-id": process.env.METAL_CLIENT_ID,
-        },
-        json: {
-          model: "text-embedding-ada-002",
-          name: "langchain-ui",
-          dimensions: 1536,
-        },
-      }
-    )
-    .json();
+  const metadata = { url, type, id: uuidv4() };
 
   const metal = new Metal(
     process.env.METAL_API_KEY,
     process.env.METAL_CLIENT_ID,
-    id
+    process.env.METAL_INDEX_ID
   );
 
-  await Promise.all(texts.map((text) => metal.index({ text })));
+  await Promise.all(texts.map((text) => metal.index({ text, metadata })));
 
-  response.status(200).json({ success: true, data: { indexId: id } });
+  response.status(200).json({ success: true, data: { metadata } });
 };
 
 export default datasourceIngestHandler;

@@ -14,6 +14,8 @@ export async function POST(request, { params }) {
   const encoder = new TextEncoder();
   const stream = new TransformStream();
   const writer = stream.writable.getWriter();
+
+  //TODO: Move to separate endpoint to suppor the edge runtime.
   const [{ promptTemplate, datasource }, messages] = await Promise.all([
     prismaClient.chatbot.findUnique({
       where: { id: parseInt(chatbotId) },

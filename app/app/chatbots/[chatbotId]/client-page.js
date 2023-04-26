@@ -4,10 +4,12 @@ import PropTypes from "prop-types";
 import {
   Center,
   GridItem,
+  HStack,
   SimpleGrid,
   Spinner,
   Stack,
   StackDivider,
+  Tag,
   Text,
 } from "@chakra-ui/react";
 import { useAsync } from "react-use";
@@ -47,9 +49,18 @@ export default function ChatbotClientPage({ chatbotId }) {
                   <Text fontSize="sm" fontWeight={500} color="gray.500">
                     Datasources
                   </Text>
-                  <Text fontSize="sm">
-                    {chatbot.datasource?.name || "Coming soon..."}
-                  </Text>
+                  {chatbot.datasource ? (
+                    <HStack>
+                      <Text fontSize="sm">
+                        {chatbot.datasource.name}{" "}
+                        <Tag colorScheme="teal" size="sm">
+                          {chatbot.datasource.type}
+                        </Tag>
+                      </Text>
+                    </HStack>
+                  ) : (
+                    <Text fontSize="sm">No datasource selected...</Text>
+                  )}
                 </Stack>
                 <Stack spacing={1}>
                   <Text fontSize="sm" fontWeight={500} color="gray.500">

@@ -76,10 +76,10 @@ export default function DatasourcesClientPage() {
       await uploadFile(files[0], uploadUrl);
 
       const {
-        data: { indexId },
+        data: { metadata },
       } = await ingestData({ url: s3Url, type: fileType });
       const { data: datasource } = await createDatasource({
-        metalIndexId: indexId,
+        metadata: metadata,
         name: name,
         type: type,
       });
@@ -133,7 +133,9 @@ export default function DatasourcesClientPage() {
                   >
                     <HStack>
                       <Text fontSize="sm">{name}</Text>{" "}
-                      <Tag size="sm">{type}</Tag>
+                      <Tag colorScheme="teal" size="sm">
+                        {type}
+                      </Tag>
                     </HStack>
                   </Td>
                   <Td textAlign="right" borderBottomColor={borderBottomColor}>

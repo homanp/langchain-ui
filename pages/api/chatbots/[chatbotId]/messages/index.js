@@ -13,6 +13,18 @@ export const chatbotMessagesHandler = async (request, response) => {
 
     return response.status(200).json({ sucess: true, data: message });
   }
+
+  if (request.method === "GET") {
+    const messages = await prismaClient.chatbotMessage.findMany({
+      where: { chatbotId: parseInt(chatbotId) },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 5,
+    });
+
+    return response.status(200).json({ sucess: true, data: messages });
+  }
 };
 
 export default chatbotMessagesHandler;
