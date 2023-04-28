@@ -29,7 +29,6 @@ import { useForm } from "react-hook-form";
 import PageHeader from "@/components/page-header";
 import { useSidebar } from "@/lib/sidebar";
 import {
-  ingestData,
   createDatasource,
   getDatasources,
   removeDatasourceById,
@@ -75,11 +74,8 @@ export default function DatasourcesClientPage() {
 
       await uploadFile(files[0], uploadUrl);
 
-      const {
-        data: { metadata },
-      } = await ingestData({ url: s3Url, type: fileType });
       const { data: datasource } = await createDatasource({
-        metadata: metadata,
+        url: s3Url,
         name: name,
         type: type,
       });

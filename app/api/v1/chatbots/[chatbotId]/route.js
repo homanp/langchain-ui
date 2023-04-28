@@ -33,12 +33,7 @@ export async function POST(request, { params }) {
     }),
   ]);
 
-  const history = messages.map(({ agent, message }) =>
-    agent === "ai" ? new AIChatMessage(message) : new HumanChatMessage(message)
-  );
-
   const handleNewToken = async (token) => {
-    const match = /\r|\n/.exec(token);
     await writer.ready;
     await writer.write(encoder.encode(`data: ${token}\n\n`));
   };
@@ -63,11 +58,7 @@ export async function POST(request, { params }) {
     onLLMError: handleTokenError,
   });
 
-  chain.call(
-    datasource
-      ? { question: message, chat_history: new ChatMessageHistory(history) }
-      : { message }
-  );
+  chain.call({ message });
 
   return new NextResponse(stream.readable, {
     headers: {
