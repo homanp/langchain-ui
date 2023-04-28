@@ -20,6 +20,7 @@ model User {
   sessions       Session[]
   PromptTemplate PromptTemplate[]
   Chatbot        Chatbot[]
+  Datasource     Datasource[]
 }
 
 model Account {
@@ -69,14 +70,28 @@ model PromptTemplate {
   Chatbot   Chatbot[]
 }
 
+model Datasource {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  url       String
+  name      String
+  type      String
+  Chatbot   Chatbot[]
+}
+
 model Chatbot {
   id               Int              @id @default(autoincrement())
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
   user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId           String
-  promptTemplate   PromptTemplate?  @relation(fields: [promptTemplateId], references: [id], onDelete: Cascade)
+  promptTemplate   PromptTemplate?  @relation(fields: [promptTemplateId], references: [id])
   promptTemplateId Int?
+  datasource       Datasource?      @relation(fields: [datasourceId], references: [id])
+  datasourceId     Int?
   name             String
   ChatbotMessage   ChatbotMessage[]
 }

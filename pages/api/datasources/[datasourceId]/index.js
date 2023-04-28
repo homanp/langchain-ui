@@ -2,9 +2,9 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]";
 import { prismaClient } from "@/lib/prisma";
 
-const chatbotHandler = async (request, response) => {
+const datasourceHandler = async (request, response) => {
   const session = await getServerSession(request, response, authOptions);
-  const { chatbotId } = request.query;
+  const { datasourceId } = request.query;
 
   if (!session) {
     return response
@@ -13,26 +13,9 @@ const chatbotHandler = async (request, response) => {
   }
 
   if (request.method === "DELETE") {
-    const data = await prismaClient.chatbot.delete({
+    const data = await prismaClient.datasource.delete({
       where: {
-        id: parseInt(chatbotId),
-      },
-    });
-
-    return response.status(200).json({
-      success: true,
-      data,
-    });
-  }
-
-  if (request.method === "GET") {
-    const data = await prismaClient.chatbot.findUnique({
-      where: {
-        id: parseInt(chatbotId),
-      },
-      include: {
-        datasource: true,
-        promptTemplate: true,
+        id: parseInt(datasourceId),
       },
     });
 
@@ -43,9 +26,9 @@ const chatbotHandler = async (request, response) => {
   }
 
   if (request.method === "PATCH") {
-    const data = await prismaClient.chatbot.update({
+    const data = await prismaClient.datasource.update({
       where: {
-        id: parseInt(chatbotId),
+        id: parseInt(datasourceId),
       },
       data: { ...request.body },
     });
@@ -57,4 +40,4 @@ const chatbotHandler = async (request, response) => {
   }
 };
 
-export default chatbotHandler;
+export default datasourceHandler;

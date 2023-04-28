@@ -34,7 +34,7 @@ export default function Message({ agent, message, isLastMessage }) {
           borderRadius="md"
           src={agent && "/chatbot.png"}
           name={!agent && "User"}
-          size="sm"
+          size="xs"
           alignSelf="flex-start"
         />
         <Stack spacing={4} fontSize="sm" flex={1}>
