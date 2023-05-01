@@ -6,6 +6,8 @@ import { createChatbotMessage } from "@/lib/api";
 import ChatInput from "./input";
 import ChatOuput from "./output";
 
+const API_URL = process.env.NEXT_PUBLIC_LANGCHAIN_UI_API_URL;
+
 export default function Chat({ id, ...properties }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState();
@@ -27,7 +29,7 @@ export default function Chat({ id, ...properties }) {
         agent: "user",
       });
 
-      await fetchEventSource(`/api/v1/chatbots/${id}`, {
+      await fetchEventSource(`${API_URL}chatbots/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
