@@ -43,7 +43,7 @@ Features:
 - [x] Bring your own Auth provider
 - [x] Chatbots
 - [x] Prompt templates
-- [ ] API endpoints to chatbot
+- [-] API endpoints to chatbot
 - [ ] External datasources
 - [ ] chatGPT plugins
 - [ ] Chatbots themes
@@ -59,6 +59,14 @@ Features:
 LangChain UI utilizes NextJS 13 `appDir`. Read more about it [here](https://nextjs.org/blog/next-13#new-app-directory-beta)
 
 ## Getting started
+
+### Langchain UI API
+
+We have migrated all agent functionality from LangChain Typescript to LangChain Python. Thus you will need to run the (Langchain UI API)[https://github.com/homanp/langchain-ui] in order to interact with the chatbot. In the future when the TS package is on par with the Python package we will migrate to only using Javascript.
+
+### Getting started
+
+1. Setup the (Langchain UI API)[https://github.com/homanp/langchain-ui]
 
 1. Clone the repo into a public GitHub repository (or fork https://github.com/homanp/langchain-ui/fork). If you plan to distribute the code, keep the source code public.
 
