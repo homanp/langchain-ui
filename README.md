@@ -62,11 +62,11 @@ LangChain UI utilizes NextJS 13 `appDir`. Read more about it [here](https://next
 
 ### Langchain UI API
 
-We have migrated all agent functionality from LangChain Typescript to LangChain Python. Thus you will need to run the (Langchain UI API)[https://github.com/homanp/langchain-ui] in order to interact with the chatbot. In the future when the TS package is on par with the Python package we will migrate to only using Javascript.
+We have migrated all agent functionality from LangChain Typescript to LangChain Python. Thus you will need to run the [Langchain UI API](https://github.com/homanp/langchain-ui) in order to interact with the chatbot. In the future when the TS package is on par with the Python package we will migrate to only using Javascript.
 
 ### Installation
 
-1. Setup the (Langchain UI API)[https://github.com/homanp/langchain-ui]
+1. Setup the [Langchain UI API](https://github.com/homanp/langchain-ui-api)
 
 1. Clone the repo into a public GitHub repository (or fork https://github.com/homanp/langchain-ui/fork). If you plan to distribute the code, keep the source code public.
 
