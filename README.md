@@ -86,9 +86,11 @@ We have migrated all agent functionality from LangChain Typescript to LangChain 
    npm install
    ```
 
-1. Set up your .env file
+1. Set up your .env file by duplicating
 
-   - Duplicate `.env.example` to `.env`
+   ```sh
+   cp .env.example .env
+   ```
 
 1. Prisma Schema : Migrate the PostgreSQL database
 
