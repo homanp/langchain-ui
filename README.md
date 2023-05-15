@@ -39,7 +39,7 @@ Features:
 
 ## Roadmap
 
-- [x] Bring your own db
+- [x] Bring your own db (Railway.app)
 - [x] Bring your own Auth provider
 - [x] Chatbots
 - [x] Prompt templates
@@ -89,6 +89,12 @@ We have migrated all agent functionality from LangChain Typescript to LangChain 
 1. Set up your .env file
 
    - Duplicate `.env.example` to `.env`
+
+1. Prisma Schema : Migrate the PostgreSQL database
+
+   ```sh
+   npm run migrate:dev
+   ```
 
 1. Run the project
 
