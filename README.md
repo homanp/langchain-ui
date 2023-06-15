@@ -1,7 +1,9 @@
 <!-- Title -->
 
-# 🧬 LangChain UI
+## 🚨🚨 This repository is unmaintained 🚨🚨
+Note that this repository is unmaintained. We've started working on another approach which gives more granular access to LLM-powered Agents. Please check out out https://github.com/homanp/superagent. We appreciate all the feedback and contributions 🙏🙏🙏
 
+# 🧬 LangChain UI
 The no-code open source chat-ai toolkit built on top of [LangChain](https://github.com/hwchase17/langchain).
 
 <p>
